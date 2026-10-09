@@ -1,0 +1,18 @@
+# Normalize line endings in the repository to LF.
+# Working tree also stays LF so diffs never carry phantom whole-file changes.
+* text=auto eol=lf
+
+# Windows scripts must keep CRLF to execute.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary assets - never diffed or line-ending converted.
+*.ico binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.avif binary
+*.woff binary
+*.woff2 binary
