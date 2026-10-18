@@ -1,9 +1,26 @@
 ---
-// TODO(design): Projects stub.
-// No images yet - entries come from src/data/projects.ts. Project thumbnails
-// will be self-hosted assets, never hotlinked.
+import SectionHeader from "./SectionHeader.astro";
+import ProjectGrid from "../react/ProjectGrid";
+import { copy } from "../../data/content";
+import { projects, projectStatusLabels } from "../../data/projects";
+
+const items = projects.map((project) => ({
+	slug: project.slug,
+	title: project.title,
+	statusLabel: projectStatusLabels[project.status],
+	summary: project.summary,
+	tech: project.tech,
+}));
 ---
 
-<section id="projects">
-	<h2>Projects</h2>
+<section id="projects" class="section-pad">
+	<div class="shell">
+		<SectionHeader
+			id="projects-heading"
+			label={copy.projects.label}
+			heading={copy.projects.heading}
+		/>
+
+		<ProjectGrid client:visible items={items} />
+	</div>
 </section>
