@@ -1,11 +1,19 @@
 ---
-// TODO(design): Hero stub.
-// Centered hero, small uppercase name with wide tracking (0.15-0.3em),
-// light weight. Slow blur-to-sharp fade-in reveal.
-// React islands (Motion) live in src/components/react/ and mount here
-// with client:visible. See docs/DESIGN.md.
+import HeroEntrance from "../react/HeroEntrance";
+import { copy } from "../../data/content";
+import { profile } from "../../data/profile";
 ---
 
-<section id="hero">
-	<h1>Hero</h1>
+<section
+	id="top"
+	class="relative flex min-h-svh items-center justify-center pt-24 pb-20 sm:pt-28"
+>
+	<HeroEntrance
+		client:load
+		name={profile.name}
+		tagline={profile.tagline}
+		contactLabel={copy.hero.contactLabel}
+		projectsLabel={copy.hero.projectsLabel}
+		email={profile.email}
+	/>
 </section>

@@ -1,0 +1,18 @@
+---
+import { nav } from "../../data/content";
+---
+
+<header class="glass sticky top-0 z-50 border-b">
+	<nav aria-label="Primary" class="shell flex h-16 items-center justify-between gap-4">
+		<a
+			href="#top"
+			class="text-label -ml-1 rounded-sm px-1 uppercase tracking-label text-ink-2 transition-colors duration-500 hover:text-ink"
+		>
+			{nav.brand}
+		</a>
+
+		<a href="#contact" class="btn btn-outline">
+			{nav.contactLabel}
+		</a>
+	</nav>
+</header>
