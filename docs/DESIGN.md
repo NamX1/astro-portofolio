@@ -58,16 +58,22 @@ landing. Text over glass must still clear 4.5:1.
 
 ## Icons
 
-- Thin stroke, 1–1.25px — everywhere except the skills grid.
-- The **skills grid is the one filled-brand-mark surface**: simple-icons SVG
-  paths, greyscale at rest, brand hex on hover or tap. It is the page's only
-  chromatic event and is meant to be.
+- Thin stroke, 1–1.25px — everywhere except the skills marks.
+- The **skills marquee and grouped block are the one filled-brand-mark
+  surface**: simple-icons SVG paths, greyscale at rest, brand hex on hover or
+  tap. It is the page's only chromatic event and is meant to be.
+- SQL has no simple-icons entry, so it uses lucide's `Database` at the
+  project's 1.25 stroke — the one thin glyph among filled marks.
 - Contact channels use thin-stroke lucide glyphs (`MessageCircle`, `Mail`,
   `GitFork`) rather than the WhatsApp or GitHub logos, so three filled brand
-  marks do not compete with the skills grid for attention.
+  marks do not compete with the skills marks for attention.
 - Hover is written out under `@media (hover: hover) and (pointer: fine)`.
   Tailwind emits a bare `:hover`, which on touch latches the brand colour on
   after a tap.
+- The `.skill` rules live in `global.css`, not in `Skills.astro`. Astro scopes
+  a component's `<style>` to that component's own scope id, and the `<svg>`
+  comes from `SkillMark.astro` — a rule in `Skills.astro` would never reach
+  it. Same reason `.cert-*` is global.
 
 ## Hierarchy
 
@@ -79,7 +85,29 @@ landing. Text over glass must still clear 4.5:1.
 
 ## Sections
 
-Hero, About, Skills (+ Credentials), Projects, Contact.
+Hero, About, Skills (marquee + grouped block + Credentials), Projects, Contact.
+
+## Skills
+
+Two blocks, because they answer different questions.
+
+- **Marquee** — Python, Go, TypeScript, Astro, Tailwind CSS, Linux, SQL. What
+  he writes in. CSS only, no island, no JS shipped.
+- **Grouped block** — what he ships on. Currently one group, `Workflow`
+  (Git, GitHub, Linux). Linux appears in both on purpose: the marquee says
+  what he writes, the group says what he ships on.
+- **No levels, bars or percentages anywhere.** A self-assigned proficiency
+  score is not something a visitor can check.
+
+The marquee repeats its list three times and translates by exactly one third,
+so the seam lands on an identical copy of the start. Two copies only works
+while one set is wider than the viewport, which stops being true on a wide
+monitor.
+
+Pausing is available on hover *and* `focus-within` — a keyboard user cannot
+hover, and WCAG 2.2.2 asks for a way to stop auto-moving content. Under
+`prefers-reduced-motion` the scroll stops and the list wraps once, so all
+seven stay readable.
 
 ## Contact
 

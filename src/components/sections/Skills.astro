@@ -1,18 +1,13 @@
 ---
 import { getImage } from "astro:assets";
 
+import SkillMark from "../ui/SkillMark.astro";
 import SectionHeading from "../react/SectionHeading";
 import Reveal from "../react/Reveal";
 import CertificateGrid from "../react/CertificateGrid";
 import { copy } from "../../data/content";
-import { skills } from "../../data/skills";
+import { marqueeSkills, skillGroups } from "../../data/skills";
 import { certificates } from "../../data/certificates";
-import { brand } from "../../lib/brands";
-
-const marks = skills.flatMap((skill) => {
-	const icon = brand(skill.slug);
-	return icon ? [{ ...skill, icon }] : [];
-});
 
 /**
  * Optimise the certificate images here rather than inside the island.
@@ -72,6 +67,14 @@ const items = await Promise.all(
 		};
 	}),
 );
+
+/**
+ * The marquee repeats its list three times and translates by exactly one
+ * third, so the seam lands on an identical copy of the start. Two copies only
+ * works while one set is wider than the viewport, which stops being true on a
+ * wide monitor.
+ */
+const marqueeRepeats = 3;
 ---
 
 <section id="skills" class="section-pad">
@@ -81,29 +84,69 @@ const items = await Promise.all(
 			label={copy.skills.label}
 			lines={copy.skills.lines}
 			headingId="skills-heading"
-			className="mb-12 sm:mb-16"
+			className="mb-10 sm:mb-12"
 		/>
 
-		<ul class="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-6">
-			{
-				marks.map(({ label, icon }) => (
-					<li class="skill group flex flex-col items-center gap-3 text-center">
-						<svg
-							viewBox="0 0 24 24"
-							fill="currentColor"
-							aria-hidden="true"
-							class="size-7 sm:size-8"
-							style={`--brand: #${icon.hex}`}
-						>
-							<path d={icon.path} />
-						</svg>
-						<span class="text-label uppercase tracking-label text-ink-2" translate="no">
-							{label}
-						</span>
-					</li>
-				))
-			}
-		</ul>
+		{/*
+			Decorative motion, so it is CSS only - no island, no JS shipped.
+			The repeated copies are hidden from assistive tech; the first copy is
+			the real list.
+
+			The container is focusable so the scroll can be stopped with a
+			keyboard. Nothing inside the marquee is itself focusable, so
+			:focus-within would otherwise never fire and a keyboard user would
+			have no way to pause it - which WCAG 2.2.2 asks for, since the
+			animation starts on its own and runs for 42 seconds. It pauses on
+			hover too, but hover is not a mechanism a keyboard user can reach.
+		*/}
+		<div
+			class="marquee"
+			tabindex="0"
+			role="group"
+			aria-label="Skills in use, scrolling"
+		>
+			<ul class="marquee-track">
+				{
+					Array.from({ length: marqueeRepeats }).flatMap((_, repeat) =>
+						marqueeSkills.map((skill) => (
+							<li
+								class="marquee-item skill"
+								aria-hidden={repeat > 0 ? "true" : undefined}
+							>
+								<SkillMark skill={skill} class="size-6 sm:size-7" />
+								<span class="text-label uppercase tracking-label text-ink-2" translate="no">
+									{skill.label}
+								</span>
+							</li>
+						)),
+					)
+				}
+			</ul>
+		</div>
+
+		{
+			skillGroups.length > 0 && (
+				<div class="mt-16 sm:mt-20">
+					{skillGroups.map((group) => (
+						<div class="skill-group">
+							<h3 class="text-label uppercase tracking-label text-ink-2">
+								{group.label}
+							</h3>
+							<ul class="mt-5 flex flex-wrap gap-x-8 gap-y-4 sm:gap-x-10">
+								{group.skills.map((skill) => (
+									<li class="skill flex items-center gap-2.5">
+										<SkillMark skill={skill} class="size-5" />
+										<span class="text-body text-ink-2" translate="no">
+											{skill.label}
+										</span>
+									</li>
+								))}
+							</ul>
+						</div>
+					))}
+				</div>
+			)
+		}
 
 		<div class="mt-20 sm:mt-24">
 			<Reveal client:visible>
@@ -114,40 +157,86 @@ const items = await Promise.all(
 </section>
 
 <style>
-	/* Greyscale at rest, brand colour on hover or tap. Colour is never
-	   load-bearing here, so it is safe to live in :hover/:active only. */
-	.skill svg {
-		color: var(--palette-text-2);
-		transition:
-			color var(--duration-ui) var(--ease-out-apple),
-			transform var(--duration-ui) var(--ease-out-apple);
+	/* Logo marquee.
+
+	   Every item carries the same trailing margin, so one set is exactly one
+	   third of the track and the -33.333% landing is pixel-identical to the
+	   start. No will-change: the track is promoted by the compositor anyway,
+	   and holding a permanent hint on a strip this wide costs memory. */
+	.marquee {
+		overflow: hidden;
+		/* Fade the edges so items enter and leave instead of being guillotined
+		   by the clip. */
+		mask-image: linear-gradient(
+			to right,
+			transparent,
+			#000 8%,
+			#000 92%,
+			transparent
+		);
 	}
 
-	/* :active is transient on every pointer type, so it is safe unguarded. */
-	.skill:active svg {
-		color: var(--brand);
-		transform: translateY(-2px);
+	.marquee-track {
+		display: flex;
+		width: max-content;
+		animation: marquee-scroll 42s linear infinite;
 	}
 
-	/* Hover only where there is a real pointer. Tailwind emits a bare
-	   :hover, which on touch latches the brand colour on and leaves it
-	   stuck after the finger lifts - the same reason the certificate
-	   overlay is written out rather than using group-hover:. */
-	@media (hover: hover) and (pointer: fine) {
-		.skill:hover svg {
-			color: var(--brand);
-			transform: translateY(-2px);
+	.marquee-item {
+		display: flex;
+		align-items: center;
+		gap: 0.625rem;
+		margin-right: 2.5rem;
+		white-space: nowrap;
+	}
+
+	/* Hover and focus are the same affordance: the track stops moving. Focus
+	   matters as much as hover here, because a keyboard user cannot hover. */
+	.marquee:hover .marquee-track,
+	.marquee:focus-within .marquee-track {
+		animation-play-state: paused;
+	}
+
+	/* Stated locally as well as globally. The marquee is the one place on the
+	   page where focus does something, so the ring must not be lost to a
+	   future outline-none. */
+	.marquee:focus-visible {
+		outline: 2px solid var(--palette-text-2);
+		outline-offset: 3px;
+	}
+
+	@keyframes marquee-scroll {
+		to {
+			transform: translateX(-33.3333%);
 		}
+	}
+
+	.skill-group + .skill-group {
+		margin-top: 2.5rem;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.skill svg {
-			transition: color var(--duration-ui) var(--ease-out-apple);
+		/* Stop the scroll and show the list once, wrapped. Motion is not
+		   load-bearing: the seven skills stay readable either way. */
+		.marquee {
+			mask-image: none;
 		}
 
-		.skill:hover svg,
-		.skill:active svg {
-			transform: none;
+		.marquee-track {
+			animation: none;
+			width: auto;
+			flex-wrap: wrap;
+			justify-content: flex-start;
+			gap: 0.75rem 2rem;
+		}
+
+		/* Hide the two duplicate copies. */
+		.marquee-track > :nth-child(n + 8) {
+			display: none;
+		}
+
+		.marquee-item {
+			margin-right: 0;
 		}
 	}
 </style>

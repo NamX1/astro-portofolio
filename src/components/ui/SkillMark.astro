@@ -1,0 +1,39 @@
+---
+import Icon from "./Icon.astro";
+import type { Skill } from "../../data/skills";
+
+/**
+ * Renders a skill's icon, whichever source it came from.
+ *
+ * `Skill.icon` is a union because SQL has no simple-icons entry and uses
+ * lucide instead, and because a filled brand path and a 1.25px stroke glyph are
+ * genuinely different things to draw. Keeping the branch here means the
+ * marquee and the grouped block never have to think about it.
+ *
+ * Astro components cannot be called as functions from frontmatter, so the
+ * branch lives in the template rather than in a helper.
+ */
+interface Props {
+	skill: Skill;
+	class?: string;
+}
+
+const { skill, class: className } = Astro.props;
+---
+
+{
+	skill.icon.kind === "lucide" ? (
+		<Icon name={skill.icon.name} class={className} />
+	) : (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			fill="currentColor"
+			aria-hidden="true"
+			class={className}
+			style={`--brand: #${skill.icon.hex}`}
+		>
+			<path d={skill.icon.path} />
+		</svg>
+	)
+}

@@ -349,6 +349,41 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * Skill marks.
+ *
+ * Lives here rather than in Skills.astro for the same reason `.cert-*` does:
+ * the <li> is authored by Skills.astro but the <svg> comes from
+ * SkillMark.astro, and Astro scopes a component's <style> to that component's
+ * own scope id. A rule in Skills.astro would never reach the icon.
+ *
+ * Greyscale at rest, brand colour on hover or tap. Colour is never
+ * load-bearing, so it is safe to live in :hover/:active only.
+ * ------------------------------------------------------------------------ */
+
+.skill svg {
+    color: var(--palette-text-2);
+    transition:
+        color var(--duration-ui) var(--ease-out-apple),
+        transform var(--duration-ui) var(--ease-out-apple);
+}
+
+/* :active is transient on every pointer type, so it is safe unguarded. */
+.skill:active svg {
+    color: var(--brand);
+    transform: translateY(-2px);
+}
+
+/* Hover only where there is a real pointer. Tailwind emits a bare :hover,
+   which on touch latches the brand colour on after a tap and leaves it stuck
+   once the finger lifts. */
+@media (hover: hover) and (pointer: fine) {
+    .skill:hover svg {
+        color: var(--brand);
+        transform: translateY(-2px);
+    }
+}
+
+/* ---------------------------------------------------------------------------
  * Background: drifting blobs + cursor spotlight.
  * Blur radius is static; only transform is ever animated.
  * ------------------------------------------------------------------------ */
@@ -534,6 +569,13 @@
 
     .hero-parallax {
         transform: none !important;
+    }
+
+    /* The colour change on a skill mark is the whole affordance, so it stays.
+       The 2px lift is motion, so it goes. */
+    .skill:hover svg,
+    .skill:active svg {
+        transform: none;
     }
 
     *,

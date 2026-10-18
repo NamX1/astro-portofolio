@@ -25,10 +25,10 @@ src/
   components/
     react/      React islands; all Motion code lives here (.tsx only)
     sections/   Page sections (.astro)
-    ui/         shadcn/ui components + Icon.astro (static lucide SVG)
+    ui/         shadcn/ui components + Icon.astro, SkillMark.astro (static SVG)
   data/         profile, projects, certificates, skills, content (all copy)
   layouts/      Layout.astro
-  lib/          config switches, brand icons
+  lib/          config switches, motion presets
   pages/        index.astro
   styles/       global.css (design tokens)
 ```
