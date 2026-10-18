@@ -1,18 +1,40 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+import Nav from "../components/sections/Nav.astro";
 import Hero from "../components/sections/Hero.astro";
 import About from "../components/sections/About.astro";
 import Skills from "../components/sections/Skills.astro";
 import Projects from "../components/sections/Projects.astro";
 import Contact from "../components/sections/Contact.astro";
+import Footer from "../components/sections/Footer.astro";
+
+import SmoothScroll from "../components/react/SmoothScroll";
+import CursorSpotlight from "../components/react/CursorSpotlight";
+import { ENABLE_SMOOTH_SCROLL } from "../lib/config";
 ---
 
 <Layout>
-	<main>
+	<a
+		href="#main"
+		class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-md focus:bg-raised focus:px-4 focus:py-3 focus:text-body focus:text-ink"
+	>
+		Skip to content
+	</a>
+
+	<Nav />
+
+	<main id="main">
 		<Hero />
 		<About />
 		<Skills />
 		<Projects />
 		<Contact />
 	</main>
+
+	<Footer />
+
+	{/* Both are above-the-fold affordances, so they mount immediately. */}
+	{ENABLE_SMOOTH_SCROLL && <SmoothScroll client:load />}
+	<CursorSpotlight client:load />
 </Layout>
