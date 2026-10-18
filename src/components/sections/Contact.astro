@@ -1,9 +1,52 @@
 ---
-// TODO(design): Contact stub.
-// No form backend and no localStorage/sessionStorage. Links out only, plus a
-// shadcn <Dialog> (src/components/ui/dialog.tsx) for a copyable email.
+import SectionHeader from "./SectionHeader.astro";
+import Reveal from "../react/Reveal";
+import Icon from "../ui/Icon.astro";
+import { copy } from "../../data/content";
+import { hasEmail, profile } from "../../data/profile";
+
+// No address on file means no email button. Warn at build time so it does not
+// ship as a silent omission.
+if (!hasEmail) {
+	console.warn(
+		"[content] profile.email is empty - the Contact email button is hidden. Set it in src/data/profile.ts to enable.",
+	);
+}
 ---
 
-<section id="contact">
-	<h2>Contact</h2>
+<section id="contact" class="section-pad">
+	<div class="shell">
+		<Reveal client:visible>
+			<SectionHeader
+				id="contact-heading"
+				label={copy.contact.label}
+				heading={copy.contact.heading}
+			/>
+
+			<p class="mt-8 max-w-prose font-serif text-lead leading-[1.5] font-light text-ink-2">
+				{copy.contact.body}
+			</p>
+
+			<div class="mt-10 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4">
+				{
+					hasEmail && (
+						<a href={`mailto:${profile.email}`} class="btn btn-primary">
+							<Icon name="mail" class="size-4" />
+							{copy.contact.emailLabel}
+						</a>
+					)
+				}
+
+				<a
+					href={profile.links.github}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="btn btn-outline"
+				>
+					{copy.contact.githubLabel}
+					<Icon name="arrow-up-right" class="size-4" />
+				</a>
+			</div>
+		</Reveal>
+	</div>
 </section>

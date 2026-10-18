@@ -1,0 +1,13 @@
+---
+import { copy } from "../../data/content";
+import { profile } from "../../data/profile";
+---
+
+<footer class="shell border-t border-border/60 py-10">
+	<p class="text-label uppercase tracking-label text-ink-2">
+		{copy.footer.line}
+	</p>
+	<p class="mt-2 text-label uppercase tracking-label text-ink-2">
+		&copy; {new Date().getFullYear()} {profile.name}
+	</p>
+</footer>
