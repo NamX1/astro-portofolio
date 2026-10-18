@@ -36,6 +36,8 @@ export const copy = {
 		label: "Credentials",
 		heading: "Certificates",
 		verifyLabel: "Verify",
+		/** TODO(content): wording for the in-card overlay and the dialog. */
+		verifyAction: "Verify credential",
 	},
 	projects: {
 		label: "Projects",

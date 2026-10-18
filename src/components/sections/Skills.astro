@@ -1,9 +1,10 @@
 ---
-import { buttonVariants } from "../ui/button";
-import Icon from "../ui/Icon.astro";
+import { getImage } from "astro:assets";
+
 import { Separator } from "../ui/separator";
 import SectionHeader from "./SectionHeader.astro";
 import Reveal from "../react/Reveal";
+import CertificateGrid from "../react/CertificateGrid";
 import { copy } from "../../data/content";
 import { skills } from "../../data/skills";
 import { certificates } from "../../data/certificates";
@@ -14,7 +15,70 @@ const marks = skills.flatMap((skill) => {
 	return icon ? [{ ...skill, icon }] : [];
 });
 
-const verifyClass = buttonVariants({ variant: "outline" });
+/**
+ * Optimise the certificate images here rather than inside the island.
+ *
+ * astro:assets <Image /> is an Astro component and cannot render inside a
+ * React island. getImage() is the documented equivalent for that case and
+ * returns the same optimised output, which we pass down as plain props.
+ *
+ * Two sizes: a thumbnail for the grid, a full-size one for the dialog.
+ * `densities` produces the srcset (getImage has no `sizes` option).
+ */
+/**
+ * `getImage` returns srcSet as `{ values: [{ url, descriptor }] }`, not a
+ * ready-made attribute string. Flatten it for the <img>.
+ */
+function toSrcSet(
+	srcSet:
+		| { values: { url: string; descriptor?: string }[] }
+		| undefined,
+): string | undefined {
+	if (!srcSet?.values?.length) return undefined;
+	return srcSet.values
+		.map((value) =>
+			value.descriptor ? `${value.url} ${value.descriptor}` : value.url,
+		)
+		.join(", ");
+}
+
+const items = await Promise.all(
+	certificates.map(async (certificate) => {
+		const thumb = await getImage({
+			src: certificate.image,
+			width: 800,
+			format: "webp",
+			densities: [1, 1.5],
+		});
+		const large = await getImage({
+			src: certificate.image,
+			width: certificate.image.width,
+			format: "webp",
+		});
+
+		return {
+			title: certificate.title,
+			issuer: certificate.issuer,
+			verifyUrl: certificate.verifyUrl,
+			alt: certificate.alt,
+			issued: certificate.issued,
+			summary: certificate.summary,
+			thumb: {
+				src: thumb.src,
+				width: Number(thumb.attributes.width),
+				height: Number(thumb.attributes.height),
+				srcSet: toSrcSet(thumb.srcSet),
+			},
+			large: {
+				src: large.src,
+				width: Number(large.attributes.width),
+				height: Number(large.attributes.height),
+				srcSet: toSrcSet(large.srcSet),
+			},
+			labels: { verifyAction: copy.credentials.verifyAction },
+		};
+	}),
+);
 ---
 
 <section id="skills" class="section-pad">
@@ -46,10 +110,12 @@ const verifyClass = buttonVariants({ variant: "outline" });
 					))
 				}
 			</ul>
+		</Reveal>
 
-			<div class="mt-20 sm:mt-24">
-				<Separator className="mb-12 sm:mb-16" />
+		<div class="mt-20 sm:mt-24">
+			<Separator className="mb-12 sm:mb-16" />
 
+			<Reveal client:visible>
 				<p class="text-label uppercase tracking-label text-ink-2">
 					{copy.credentials.label}
 				</p>
@@ -59,36 +125,10 @@ const verifyClass = buttonVariants({ variant: "outline" });
 				>
 					{copy.credentials.heading}
 				</h3>
+			</Reveal>
 
-				<ul class="mt-10">
-					{
-						certificates.map((certificate, index) => (
-							<>
-								{index > 0 && <Separator />}
-								<li class="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-5">
-									<div class="min-w-0">
-										<p class="text-body text-ink">{certificate.title}</p>
-										<p class="mt-1 text-label uppercase tracking-label text-ink-2">
-											{certificate.issuer}
-											{certificate.year && ` · ${certificate.year}`}
-										</p>
-									</div>
-									<a
-										href={certificate.verifyUrl}
-										target="_blank"
-										rel="noopener noreferrer"
-										class={verifyClass}
-									>
-										{copy.credentials.verifyLabel}
-										<Icon name="arrow-up-right" dataIcon="inline-end" />
-									</a>
-								</li>
-							</>
-						))
-					}
-				</ul>
-			</div>
-		</Reveal>
+			<CertificateGrid client:visible items={items} />
+		</div>
 	</div>
 </section>
 
