@@ -173,6 +173,11 @@
         @apply bg-background text-foreground;
         min-height: 100svh;
         text-rendering: optimizeLegibility;
+        /* A long URL, email or slug used to overflow ~380px and was then
+           silently clipped by `overflow-x: clip` on <html>, with no way to
+           scroll to it. `anywhere` also shrinks min-content, which matters
+           inside the centred flex column in the hero. */
+        overflow-wrap: anywhere;
     }
 
     /* Visible focus everywhere, including inside islands. */
@@ -227,15 +232,16 @@
     padding-block: var(--spacing-section);
 }
 
-/* Display heading. `text-ink-2` rather than full white - pure white at this
-   size glares on a dark page. */
+/* Display heading. Full ink - this is the only 100%-ink element on the page,
+   which is what makes the hierarchy ramp real. At this size pure #d9d6d1 is
+   still soft, not glaring. */
 @utility display {
     font-family: var(--font-serif);
     font-size: var(--text-h2);
     line-height: var(--leading-display);
     letter-spacing: var(--tracking-tight);
     font-weight: 300;
-    color: var(--palette-text-2);
+    color: var(--palette-text);
     text-wrap: balance;
 }
 
@@ -271,7 +277,6 @@
 
 .hero-parallax {
     transform: translate3d(var(--hero-px), var(--hero-py), 0);
-    will-change: transform;
 }
 
 /* ---------------------------------------------------------------------------

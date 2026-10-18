@@ -41,8 +41,10 @@ const input: CertificateInput[] = [
 		issuer: "HackerRank",
 		verifyUrl: "https://www.hackerrank.com/certificates/d5f710b194af",
 		image: "hackerrank-python-basic",
-		// TODO(content): describe the actual certificate image once it exists.
-		alt: "Placeholder image for the Python (Basic) certificate issued by HackerRank.",
+		// TODO(content): this describes the real certificate once the actual
+		// screenshot replaces the placeholder in src/assets/certificates/.
+		// Avoid the word "placeholder" - screen readers read this out loud.
+		alt: "HackerRank Python (Basic) certificate awarded for passing the Python Basic skills test.",
 	},
 ];
 

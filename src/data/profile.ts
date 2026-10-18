@@ -21,8 +21,14 @@ export const profile = {
 	 */
 	email: "",
 
-	/** TODO(content): city, or delete this key if you would rather not say. */
-	location: "TODO(content): city",
+	/**
+	 * TODO(content): set this to a city when you want to publish one.
+	 *
+	 * Deliberately `undefined`, not a TODO string. A truthy placeholder here
+	 * renders in the eyebrow type style (12px, uppercase, 0.22em tracked),
+	 * which makes a build-log string look like an intentional design element.
+	 */
+	location: undefined as string | undefined,
 
 	links: {
 		github: "https://github.com/NamX1",

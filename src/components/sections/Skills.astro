@@ -1,19 +1,12 @@
 ---
 import { getImage } from "astro:assets";
 
-import { Separator } from "../ui/separator";
 import SectionHeading from "../react/SectionHeading";
 import Reveal from "../react/Reveal";
 import CertificateGrid from "../react/CertificateGrid";
 import { copy } from "../../data/content";
 import { skills } from "../../data/skills";
 import { certificates } from "../../data/certificates";
-import { brand } from "../../lib/brands";
-
-const marks = skills.flatMap((skill) => {
-	const icon = brand(skill.slug);
-	return icon ? [{ ...skill, icon }] : [];
-});
 
 /**
  * Optimise the certificate images here rather than inside the island.
@@ -22,7 +15,6 @@ const marks = skills.flatMap((skill) => {
  * React island. getImage() is the documented equivalent for that case and
  * returns the same optimised output, which we pass down as plain props.
  *
- * Two sizes: a thumbnail for the grid, a full-size one for the dialog.
  * `densities` produces the srcset (getImage has no `sizes` option).
  */
 function toSrcSet(
@@ -73,6 +65,8 @@ const items = await Promise.all(
 		};
 	}),
 );
+
+const stackLine = skills.map((skill) => skill.label).join(" · ");
 ---
 
 <section id="skills" class="section-pad">
@@ -82,62 +76,19 @@ const items = await Promise.all(
 			label={copy.skills.label}
 			lines={copy.skills.lines}
 			headingId="skills-heading"
-			className="mb-12 sm:mb-16"
-		/>
+			className="mb-10 sm:mb-12"
+		>
+			{/*
+				One quiet line instead of a logo grid. Six framework logos were the
+				most interchangeable object on the page and the only chromatic
+				event on a monochrome site - and they duplicated the per-project
+				`tech` chips, which live in src/data/projects.ts.
+			*/}
+			<p class="rv text-body text-ink-2" translate="no">{stackLine}</p>
+		</SectionHeading>
 
-		<ul class="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-6">
-			{
-				marks.map(({ label, icon }) => (
-					<li class="skill group flex flex-col items-center gap-3 text-center">
-						<svg
-							viewBox="0 0 24 24"
-							fill="currentColor"
-							aria-hidden="true"
-							class="size-7 sm:size-8"
-							style={`--brand: #${icon.hex}`}
-						>
-							<path d={icon.path} />
-						</svg>
-						<span class="text-label uppercase tracking-label text-ink-2" translate="no">
-							{label}
-						</span>
-					</li>
-				))
-			}
-		</ul>
-
-		<div class="mt-20 sm:mt-24">
-			<Separator className="mb-12 sm:mb-16" />
-
-			<SectionHeading
-				client:visible
-				level={3}
-				label={copy.credentials.label}
-				lines={copy.credentials.lines}
-				headingId="credentials-heading"
-				className="mb-10"
-			/>
-
-			<Reveal client:visible>
-				<CertificateGrid client:visible items={items} />
-			</Reveal>
-		</div>
+		<Reveal client:visible>
+			<CertificateGrid client:visible items={items} />
+		</Reveal>
 	</div>
 </section>
-
-<style>
-	/* Greyscale at rest, brand colour on hover or tap. Colour is never
-	   load-bearing here, so it is safe to live in :hover/:active only. */
-	.skill svg {
-		color: var(--palette-text-2);
-		transition:
-			color var(--duration-ui) var(--ease-out-apple),
-			transform var(--duration-ui) var(--ease-out-apple);
-	}
-
-	.skill:hover svg,
-	.skill:active svg {
-		color: var(--brand);
-		transform: translateY(-2px);
-	}
-</style>

@@ -67,7 +67,6 @@ export default function HeroEntrance({
 			<motion.div
 				ref={ref}
 				data-hero-scroll=""
-				className="rv"
 				data-reveal=""
 				variants={group}
 				initial="hidden"
@@ -75,22 +74,24 @@ export default function HeroEntrance({
 				style={{ scale, opacity, y: drift }}
 				className="rv mx-auto flex max-w-3xl flex-col items-center text-center"
 			>
-				<motion.h1
+				{/* The promise is the page's subject, so it carries the <h1>.
+				    The name is an overline above it, not the title. */}
+				<motion.p
 					variants={rise}
 					className="rv text-label font-normal uppercase tracking-label text-ink-2"
 				>
 					{name}
-				</motion.h1>
+				</motion.p>
 
 				{/* Pointer parallax lives on an inner wrapper so it never fights
 				    the scroll transform on the element above. */}
 				<div className="hero-parallax">
-					<motion.p
+					<motion.h1
 						variants={rise}
 						className="rv mt-6 font-serif text-hero leading-[1.05] font-light tracking-tight text-balance text-ink-2"
 					>
 						{tagline}
-					</motion.p>
+					</motion.h1>
 				</div>
 
 				<motion.div

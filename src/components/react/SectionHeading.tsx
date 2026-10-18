@@ -76,6 +76,13 @@ export default function SectionHeading({
 						>
 							<motion.span className="rv block" variants={maskUp}>
 								{line}
+								{/*
+								 * Trailing space on every line but the last. The span is
+								 * `block`, so it collapses visually, but without it the
+								 * accessible name concatenates the lines into
+								 * "A short versionof this page."
+								 */}
+								{index < lines.length - 1 ? " " : null}
 							</motion.span>
 						</span>
 					))}

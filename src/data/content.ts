@@ -33,9 +33,6 @@ export const copy = {
 		lines: ["What I reach", "for."],
 	},
 	credentials: {
-		label: "Credentials",
-		lines: ["Certificates"],
-		verifyLabel: "Verify",
 		/** TODO(content): wording for the in-card overlay and the dialog. */
 		verifyAction: "Verify credential",
 	},
