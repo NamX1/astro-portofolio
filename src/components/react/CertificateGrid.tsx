@@ -10,6 +10,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "../ui/dialog";
+import { PRESS_SCALE, springs } from "../../lib/motion";
 import { MotionRoot } from "./MotionRoot";
 
 /** Output of `getImage()` in Skills.astro, flattened for serialisation. */
@@ -43,9 +44,9 @@ export interface CertificateItem {
  * Skills.astro with `getImage()` and passed in as plain props - same service,
  * same output, just serialisable.
  *
- * Hover and focus treatment is pure CSS (`group-hover:` / `group-focus-visible:`,
- * which Tailwind gates behind `@media (hover: hover)`). Motion is used only for
- * the dialog entrance.
+ * Hover and focus treatment is pure CSS (see `.cert-*` in global.css, gated
+ * behind `@media (hover: hover) and (pointer: fine)`). Motion is used only for
+ * press feedback and the dialog entrance.
  */
 export default function CertificateGrid({ items }: { items: CertificateItem[] }) {
 	const [open, setOpen] = useState(false);
@@ -63,15 +64,18 @@ export default function CertificateGrid({ items }: { items: CertificateItem[] })
 		<MotionRoot>
 			<ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 				{items.map((item) => {
-					const heading = [item.issuer, item.issued].filter(Boolean).join(" · ");
+					const heading = [item.issuer, item.issued]
+						.filter(Boolean)
+						.join(" · ");
 
 					return (
 						<li key={item.verifyUrl} className="cert-group">
-							<button
+							<motion.button
 								type="button"
 								onClick={() => show(item)}
 								aria-label={`${item.title}, ${item.issuer}. Open certificate details.`}
-								className="block w-full cursor-pointer overflow-hidden rounded-lg border border-border/60 bg-surface transition-colors duration-500 ease-out hover:border-ink-2/30"
+								whileTap={{ scale: PRESS_SCALE, transition: springs.quick }}
+								className="block w-full cursor-pointer overflow-hidden rounded-lg border border-border/60 bg-surface transition-colors duration-[var(--duration-ui)] ease-[var(--ease-out-apple)] hover:border-ink-2/30"
 							>
 								<span className="relative block overflow-hidden">
 									<img
@@ -87,7 +91,7 @@ export default function CertificateGrid({ items }: { items: CertificateItem[] })
 
 									{/* Hover/focus detail. Hidden at rest, so touch devices
 									    simply get the caption below instead. */}
-									<span className="cert-overlay cert-panel">
+									<span className="cert-panel">
 										<span className="text-label uppercase tracking-label text-ink-2">
 											{heading}
 										</span>
@@ -109,7 +113,7 @@ export default function CertificateGrid({ items }: { items: CertificateItem[] })
 										</span>
 									</span>
 								</span>
-							</button>
+							</motion.button>
 
 							{/* Always visible. Carries the card on touch, where
 							    there is no hover state to reveal the overlay. */}
@@ -130,14 +134,18 @@ export default function CertificateGrid({ items }: { items: CertificateItem[] })
 					{active && (
 						<motion.div
 							className="flex flex-col gap-5"
-							initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.98 }}
+							initial={
+								prefersReducedMotion ? false : { opacity: 0, scale: 0.97 }
+							}
 							animate={{ opacity: 1, scale: 1 }}
-							transition={{ duration: 0.22, ease: "easeOut" }}
+							transition={springs.default}
 						>
 							<DialogHeader>
 								<DialogTitle>{active.title}</DialogTitle>
 								<DialogDescription>
-									{[active.issuer, active.issued].filter(Boolean).join(" · ")}
+									{[active.issuer, active.issued]
+										.filter(Boolean)
+										.join(" · ")}
 									{active.summary ? ` — ${active.summary}` : ""}
 								</DialogDescription>
 							</DialogHeader>

@@ -1,6 +1,5 @@
 import { motion } from "motion/react";
 
-import { Badge } from "../ui/badge";
 import {
 	Card,
 	CardAction,
@@ -8,6 +7,8 @@ import {
 	CardHeader,
 	CardTitle,
 } from "../ui/card";
+import { Badge } from "../ui/badge";
+import { PRESS_SCALE, springs } from "../../lib/motion";
 import { MotionRoot } from "./MotionRoot";
 
 export interface ProjectCardData {
@@ -25,12 +26,8 @@ export interface ProjectCardData {
  * One island for the whole grid rather than one per card: three separate
  * islands would triple the hydration bookkeeping for the same effect.
  *
- * The `<li>` is a bare layout/lift wrapper - all the visual treatment lives on
- * `Card`. Motion owns the lift (`whileHover`) because the prompt calls for it.
- * Surface brightening stays in CSS so it can transition independently instead
- * of inheriting the 1s reveal duration.
- *
- * Cards are deliberately not links yet.
+ * Deliberately not glass - the brief limits glass to the nav, the certificate
+ * overlay and dialogs.
  */
 export default function ProjectGrid({ items }: { items: ProjectCardData[] }) {
 	return (
@@ -39,14 +36,16 @@ export default function ProjectGrid({ items }: { items: ProjectCardData[] }) {
 				{items.map((project) => (
 					<motion.li
 						key={project.slug}
+						className="rv"
 						data-reveal=""
-						initial={{ opacity: 0, filter: "blur(8px)" }}
-						whileInView={{ opacity: 1, filter: "blur(0px)" }}
+						initial={{ opacity: 0, y: 24 }}
+						whileInView={{ opacity: 1, y: 0 }}
 						viewport={{ once: true, amount: 0.3 }}
-						transition={{ duration: 1, ease: "easeOut" }}
+						transition={springs.soft}
 						whileHover={{ y: -4 }}
+						whileTap={{ scale: PRESS_SCALE, transition: springs.quick }}
 					>
-						<Card className="glass h-full transition-[background-color,box-shadow] duration-500 ease-out hover:bg-raised/30">
+						<Card className="h-full transition-[background-color,box-shadow] duration-[var(--duration-ui)] ease-[var(--ease-out-apple)] hover:bg-raised/30">
 							<CardHeader>
 								<CardTitle>{project.title}</CardTitle>
 								<CardAction>

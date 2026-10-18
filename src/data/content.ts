@@ -2,14 +2,14 @@
  * UI chrome: SEO strings, labels and calls to action.
  *
  * TODO(content): every string here is placeholder copy written to be replaced.
- * Section bodies live with their data - see `profile.ts` for the bio and
- * `projects.ts` / `certificates.ts` for content.
+ * Headings are arrays so the mask-up reveal can animate them line by line -
+ * each entry is one line. Section bodies live with their data.
  */
 export const seo = {
 	title: "Kevin Charlie — Web Developer",
 	/** TODO(content): 150-160 characters, written for a human not a crawler. */
 	description:
-		"Kevin Charlie builds fast, quiet websites for people who would rather be doing anything else. Python, TypeScript, Astro, Tailwind. Direct contact, no agency in the middle.",
+		"Kevin Charlie builds fast, quiet websites for people who'd rather be doing something else. Python, TypeScript, Astro, Tailwind. You talk to me directly, and the invoice has one number on it.",
 	ogAlt: "Kevin Charlie — web developer",
 } as const;
 
@@ -26,32 +26,32 @@ export const copy = {
 	},
 	about: {
 		label: "About",
-		heading: "A short version of this page.",
+		lines: ["A short version", "of this page."],
 	},
 	skills: {
 		label: "Skills",
-		heading: "What I reach for.",
+		lines: ["What I reach", "for."],
 	},
 	credentials: {
 		label: "Credentials",
-		heading: "Certificates",
+		lines: ["Certificates"],
 		verifyLabel: "Verify",
 		/** TODO(content): wording for the in-card overlay and the dialog. */
 		verifyAction: "Verify credential",
 	},
 	projects: {
 		label: "Projects",
-		heading: "Things I'm building.",
+		lines: ["Things I'm", "building."],
 	},
 	contact: {
 		label: "Contact",
-		heading: "Say hello.",
-		body: "Tell me what you need and roughly when. If I am not right for it, I will say so — that costs neither of us anything.",
+		lines: ["Say", "hello."],
+		body: "Tell me what you're after and roughly when. If I'm not the right fit I'll say so, and that costs neither of us anything.",
 		emailLabel: "Send an email",
 		githubLabel: "GitHub",
 	},
 	footer: {
 		/** TODO(content): one quiet line. */
-		line: "Built slowly, in the dark.",
+		line: "Made slowly, in the dark.",
 	},
 } as const;

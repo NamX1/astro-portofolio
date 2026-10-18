@@ -1,10 +1,10 @@
 ---
-import { buttonVariants } from "../ui/button";
-import Icon from "../ui/Icon.astro";
-import SectionHeader from "./SectionHeader.astro";
+import SectionHeading from "../react/SectionHeading";
 import Reveal from "../react/Reveal";
 import { copy } from "../../data/content";
 import { hasEmail, profile } from "../../data/profile";
+import { buttonVariants } from "../ui/button";
+import Icon from "../ui/Icon.astro";
 
 // No address on file means no email button. Warn at build time so it does not
 // ship as a silent omission.
@@ -20,37 +20,38 @@ const githubClass = buttonVariants({ variant: "outline" });
 
 <section id="contact" class="section-pad">
 	<div class="shell">
-		<Reveal client:visible>
-			<SectionHeader
-				id="contact-heading"
-				label={copy.contact.label}
-				heading={copy.contact.heading}
-			/>
+		<SectionHeading
+			client:visible
+			label={copy.contact.label}
+			lines={copy.contact.lines}
+			headingId="contact-heading"
+		>
+			<Reveal client:visible>
+				<p class="mt-8 max-w-prose font-serif text-lead leading-[1.5] font-light text-ink-2">
+					{copy.contact.body}
+				</p>
 
-			<p class="mt-8 max-w-prose font-serif text-lead leading-[1.5] font-light text-ink-2">
-				{copy.contact.body}
-			</p>
+				<div class="mt-10 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4">
+					{
+						hasEmail && (
+							<a href={`mailto:${profile.email}`} class={emailClass}>
+								<Icon name="mail" dataIcon="inline-start" />
+								{copy.contact.emailLabel}
+							</a>
+						)
+					}
 
-			<div class="mt-10 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4">
-				{
-					hasEmail && (
-						<a href={`mailto:${profile.email}`} class={emailClass}>
-							<Icon name="mail" dataIcon="inline-start" />
-							{copy.contact.emailLabel}
-						</a>
-					)
-				}
-
-				<a
-					href={profile.links.github}
-					target="_blank"
-					rel="noopener noreferrer"
-					class={githubClass}
-				>
-					{copy.contact.githubLabel}
-					<Icon name="arrow-up-right" dataIcon="inline-end" />
-				</a>
-			</div>
-		</Reveal>
+					<a
+						href={profile.links.github}
+						target="_blank"
+						rel="noopener noreferrer"
+						class={githubClass}
+					>
+						{copy.contact.githubLabel}
+						<Icon name="arrow-up-right" dataIcon="inline-end" />
+					</a>
+				</div>
+			</Reveal>
+		</SectionHeading>
 	</div>
 </section>

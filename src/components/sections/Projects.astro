@@ -1,5 +1,5 @@
 ---
-import SectionHeader from "./SectionHeader.astro";
+import SectionHeading from "../react/SectionHeading";
 import ProjectGrid from "../react/ProjectGrid";
 import { copy } from "../../data/content";
 import { projects, projectStatusLabels } from "../../data/projects";
@@ -15,10 +15,12 @@ const items = projects.map((project) => ({
 
 <section id="projects" class="section-pad">
 	<div class="shell">
-		<SectionHeader
-			id="projects-heading"
+		<SectionHeading
+			client:visible
 			label={copy.projects.label}
-			heading={copy.projects.heading}
+			lines={copy.projects.lines}
+			headingId="projects-heading"
+			className="mb-12 sm:mb-16"
 		/>
 
 		<ProjectGrid client:visible items={items} />

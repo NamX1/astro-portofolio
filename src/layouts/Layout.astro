@@ -51,12 +51,24 @@ const ogImage = "/og.png";
 
 		<noscript>
 			<style>
-				/* Motion server-renders the pre-reveal state. Without scripting
-				   there is nothing to animate it away, so force everything
-				   visible. !important is required to beat the inline style. */
+				/* Motion server-renders the pre-reveal state as inline styles.
+				   With no scripting nothing will animate it away, so force
+				   everything visible. !important is required to beat the
+				   inline style. Keep this list in step with the reduced-motion
+				   block at the bottom of global.css. */
+				.rv,
 				[data-reveal] {
 					opacity: 1 !important;
-					filter: none !important;
+					transform: none !important;
+				}
+				[data-hero-scroll] {
+					opacity: 1 !important;
+					transform: none !important;
+				}
+				[data-word-reveal] span {
+					opacity: 1 !important;
+				}
+				.hero-parallax {
 					transform: none !important;
 				}
 				.blob {

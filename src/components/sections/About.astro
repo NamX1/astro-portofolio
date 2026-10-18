@@ -1,36 +1,38 @@
 ---
-import SectionHeader from "./SectionHeader.astro";
-import Reveal from "../react/Reveal";
+import SectionHeading from "../react/SectionHeading";
+import WordReveal from "../react/WordReveal";
 import { copy } from "../../data/content";
 import { profile } from "../../data/profile";
 ---
 
 <section id="about" class="section-pad">
 	<div class="shell">
-		<Reveal client:visible>
-			<div class="grid gap-10 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:gap-16">
-				<SectionHeader
-					id="about-heading"
-					label={copy.about.label}
-					heading={copy.about.heading}
-				/>
+		<SectionHeading
+			client:visible
+			label={copy.about.label}
+			lines={copy.about.lines}
+			headingId="about-heading"
+			className="grid gap-10 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:gap-16"
+		>
+			<div class="max-w-prose space-y-6">
+				{
+					profile.about.map((paragraph) => (
+						<WordReveal
+							client:visible
+							text={paragraph}
+							className="font-serif text-lead leading-[1.5] font-light text-ink"
+						/>
+					))
+				}
 
-				<div class="max-w-prose space-y-6">
-					{profile.about.map((paragraph) => (
-						<p class="font-serif text-lead leading-[1.5] font-light text-ink">
-							{paragraph}
+				{
+					profile.location && (
+						<p class="text-label uppercase tracking-label text-ink-2">
+							{profile.location}
 						</p>
-					))}
-
-					{
-						profile.location && (
-							<p class="text-label uppercase tracking-label text-ink-2">
-								{profile.location}
-							</p>
-						)
-					}
-				</div>
+					)
+				}
 			</div>
-		</Reveal>
+		</SectionHeading>
 	</div>
 </section>

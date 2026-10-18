@@ -1,19 +1,18 @@
-import { motion, type Variants } from "motion/react";
+import { useRef } from "react";
+import { motion, useScroll, useTransform, type Variants } from "motion/react";
 import { ArrowDown } from "lucide-react";
 
 import { buttonVariants } from "../ui/button";
+import { springs } from "../../lib/motion";
 import { MotionRoot } from "./MotionRoot";
 
 /**
- * Hero entrance: a slow, staggered blur-to-sharp reveal.
+ * Hero entrance plus its scroll-linked exit.
  *
- * This is the one island on the page that mounts with `client:load` instead of
- * `client:visible`. It owns the first impression - if it waited for an
+ * This is the one island that mounts with `client:load` rather than
+ * `client:visible`. It owns the first impression - if it waited on an
  * IntersectionObserver the page would sit invisible above the fold, which is
  * exactly the moment nobody should have to wait.
- *
- * Timing follows docs/DESIGN.md: 1s, ease-out, no spring. The only transform
- * is a 10px rise, which Motion drops automatically under reduced motion.
  */
 interface HeroEntranceProps {
 	name: string;
@@ -24,21 +23,16 @@ interface HeroEntranceProps {
 	email: string;
 }
 
-const container: Variants = {
+const group: Variants = {
 	hidden: {},
 	show: {
-		transition: { delayChildren: 0.15, staggerChildren: 0.16 },
+		transition: { delayChildren: 0.12, staggerChildren: 0.09 },
 	},
 };
 
-const item: Variants = {
-	hidden: { opacity: 0, filter: "blur(10px)", y: 10 },
-	show: {
-		opacity: 1,
-		filter: "blur(0px)",
-		y: 0,
-		transition: { duration: 1, ease: "easeOut" },
-	},
+const rise: Variants = {
+	hidden: { opacity: 0, y: 16 },
+	show: { opacity: 1, y: 0, transition: springs.soft },
 };
 
 export default function HeroEntrance({
@@ -48,37 +42,60 @@ export default function HeroEntrance({
 	projectsLabel,
 	email,
 }: HeroEntranceProps) {
+	const ref = useRef<HTMLDivElement>(null);
+
 	const hasEmail = email.trim().length > 0;
 	// With no address on file, "contact" walks down to the Contact section
 	// rather than linking to a mailto that would silently fail.
 	const contactHref = hasEmail ? `mailto:${email}` : "#contact";
 
+	// Scroll-linked exit: the hero recedes as it leaves. Subtle by design.
+	// These values are written straight to style rather than animated, so
+	// prefers-reduced-motion is handled in CSS via [data-hero-scroll] - a JS
+	// branch here would render differently on the client and risk a hydration
+	// mismatch.
+	const { scrollYProgress } = useScroll({
+		target: ref,
+		offset: ["start start", "end start"],
+	});
+	const scale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
+	const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+	const drift = useTransform(scrollYProgress, [0, 1], [0, 60]);
+
 	return (
 		<MotionRoot>
 			<motion.div
+				ref={ref}
+				data-hero-scroll=""
+				className="rv"
 				data-reveal=""
-				variants={container}
+				variants={group}
 				initial="hidden"
 				animate="show"
-				className="mx-auto flex max-w-3xl flex-col items-center text-center"
+				style={{ scale, opacity, y: drift }}
+				className="rv mx-auto flex max-w-3xl flex-col items-center text-center"
 			>
 				<motion.h1
-					variants={item}
-					className="text-label font-normal uppercase tracking-label text-ink-2"
+					variants={rise}
+					className="rv text-label font-normal uppercase tracking-label text-ink-2"
 				>
 					{name}
 				</motion.h1>
 
-				<motion.p
-					variants={item}
-					className="mt-6 font-serif text-hero leading-[1.08] font-light text-balance text-ink"
-				>
-					{tagline}
-				</motion.p>
+				{/* Pointer parallax lives on an inner wrapper so it never fights
+				    the scroll transform on the element above. */}
+				<div className="hero-parallax">
+					<motion.p
+						variants={rise}
+						className="rv mt-6 font-serif text-hero leading-[1.05] font-light tracking-tight text-balance text-ink-2"
+					>
+						{tagline}
+					</motion.p>
+				</div>
 
 				<motion.div
-					variants={item}
-					className="mt-10 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center"
+					variants={rise}
+					className="rv mt-10 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center"
 				>
 					<a
 						href={contactHref}

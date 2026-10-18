@@ -22,9 +22,17 @@
     --text-label: clamp(0.6875rem, 0.665rem + 0.11vw, 0.78125rem);
     --text-body: clamp(1rem, 0.955rem + 0.22vw, 1.1875rem);
     --text-lead: clamp(1.125rem, 1.0rem + 0.62vw, 1.5rem);
-    --text-h2: clamp(1.875rem, 1.36rem + 2.6vw, 3.25rem);
+    /* Big display headings: 2.5rem on mobile, past 5rem on desktop. */
+    --text-h2: clamp(2.5rem, 1.28rem + 5.1vw, 5.25rem);
     --text-hero: clamp(2.5rem, 1.32rem + 5.9vw, 5.5rem);
     --tracking-label: 0.22em;
+    --tracking-tight: -0.02em;
+    --leading-display: 1.05;
+
+    /* iOS-style easing for every CSS transition. */
+    --ease-out-apple: cubic-bezier(0.32, 0.72, 0, 1);
+    --duration-ui: 300ms;
+    --duration-reveal: 500ms;
 
     /* Generous vertical rhythm. */
     --spacing-section: clamp(5.5rem, 13vw, 11rem);
@@ -106,6 +114,9 @@
     /* Cursor spotlight position. Overwritten per-frame by the island. */
     --spot-x: 50vw;
     --spot-y: 35vh;
+    /* Hero parallax offset. Only ever written for fine pointers. */
+    --hero-px: 0px;
+    --hero-py: 0px;
 
     /* shadcn surface tokens -> raw palette. */
     --background: var(--palette-bg);
@@ -216,16 +227,51 @@
     padding-block: var(--spacing-section);
 }
 
-/* Certificate card overlay: a surface-toned scrim so the bright certificate
-   stays legible once it brightens on hover. Lives here rather than as a
-   Tailwind arbitrary value because it mixes our own tokens. */
-@utility cert-overlay {
-    background-image: linear-gradient(
-        to top,
-        var(--palette-surface) 0%,
-        color-mix(in oklab, var(--palette-surface) 88%, transparent) 45%,
-        transparent 100%
-    );
+/* Display heading. `text-ink-2` rather than full white - pure white at this
+   size glares on a dark page. */
+@utility display {
+    font-family: var(--font-serif);
+    font-size: var(--text-h2);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-tight);
+    font-weight: 300;
+    color: var(--palette-text-2);
+    text-wrap: balance;
+}
+
+/* ---------------------------------------------------------------------------
+ * Frosted glass.
+ *
+ * Deliberately limited to three surfaces: the sticky nav, the certificate
+ * hover overlay, and dialogs. Never more than one on screen at a time besides
+ * the nav. Falls back to a solid token where backdrop-filter is unsupported,
+ * so text contrast never depends on the effect landing.
+ * ------------------------------------------------------------------------ */
+
+@utility glass {
+    background-color: rgb(28 28 30 / 0.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    backdrop-filter: blur(20px) saturate(1.4);
+    border: 1px solid rgb(255 255 255 / 0.08);
+    /* Faint top highlight - the thing that sells the edge. */
+    box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.06);
+
+    @supports not (
+        (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+    ) {
+        background-color: var(--palette-raised);
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ * Hero pointer parallax. `--hero-px/y` are written per-frame by
+ * CursorSpotlight and only ever exist for fine pointers, so touch gets a
+ * zero offset for free.
+ * ------------------------------------------------------------------------ */
+
+.hero-parallax {
+    transform: translate3d(var(--hero-px), var(--hero-py), 0);
+    will-change: transform;
 }
 
 /* ---------------------------------------------------------------------------
@@ -246,11 +292,12 @@
     opacity: 0.55;
     filter: grayscale(0.55) brightness(0.9);
     transition:
-        transform 700ms ease-out,
-        filter 700ms ease-out,
-        opacity 700ms ease-out;
+        transform var(--duration-reveal) var(--ease-out-apple),
+        filter var(--duration-reveal) var(--ease-out-apple),
+        opacity var(--duration-reveal) var(--ease-out-apple);
 }
 
+/* Glass surface + a legibility gradient under the copy. */
 .cert-panel {
     position: absolute;
     inset: 0;
@@ -263,11 +310,13 @@
     opacity: 0;
     transform: translateY(8px);
     pointer-events: none;
-    -webkit-backdrop-filter: blur(4px);
-    backdrop-filter: blur(4px);
+    background-color: rgb(28 28 30 / 0.6);
+    background-image: linear-gradient(to top, var(--palette-surface), transparent 70%);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    backdrop-filter: blur(20px) saturate(1.4);
     transition:
-        transform 300ms ease-out,
-        opacity 300ms ease-out;
+        transform var(--duration-ui) var(--ease-out-apple),
+        opacity var(--duration-ui) var(--ease-out-apple);
 }
 
 .cert-group:focus-visible .cert-thumb {
@@ -291,21 +340,6 @@
     .cert-group:hover .cert-panel {
         opacity: 1;
         transform: translateY(0);
-    }
-}
-
-/* ---------------------------------------------------------------------------
- * Glass - nav and cards only. Falls back to solid where backdrop-filter
- * is unsupported, so text contrast never degrades.
- * ------------------------------------------------------------------------ */
-
-@utility glass {
-    background-color: color-mix(in oklab, var(--palette-bg) 72%, transparent);
-    -webkit-backdrop-filter: blur(14px) saturate(115%);
-    backdrop-filter: blur(14px) saturate(115%);
-
-    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-        background-color: var(--palette-bg);
     }
 }
 
@@ -465,18 +499,35 @@
 /* ---------------------------------------------------------------------------
  * Reveal safety net.
  *
- * Motion renders `opacity:0; filter:blur(..)` straight into the HTML at build
- * time. That is correct for JS-on, but it would hide the content entirely if
- * the island never hydrates. Two overrides rescue it:
+ * Motion server-renders the pre-reveal state as an inline style. That is
+ * correct for JS-on, but it would hide the content entirely if the island
+ * never hydrates. `.rv` marks every element Motion animates in from a hidden
+ * state; two overrides rescue it:
  *   1. the <noscript> block in Layout.astro, for scripting disabled
  *   2. this media query, for prefers-reduced-motion
  * Both need !important to beat Motion's inline style.
  * ------------------------------------------------------------------------ */
 
 @media (prefers-reduced-motion: reduce) {
+    .rv,
     [data-reveal] {
         opacity: 1 !important;
-        filter: none !important;
+        transform: none !important;
+    }
+
+    /* Scroll-linked values are written straight to style, so they are not
+       suppressed by MotionConfig. Neutralise them here instead of branching
+       in JS, which would risk a hydration mismatch. */
+    [data-hero-scroll] {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    [data-word-reveal] span {
+        opacity: 1 !important;
+    }
+
+    .hero-parallax {
         transform: none !important;
     }
 

@@ -1,8 +1,9 @@
 /**
  * TODO(content): facts and bio. Every string here is placeholder copy.
  *
- * Tone for the whole page is casual with light humour. Edit freely, but keep
- * it short - this is a one-page site and restraint is the whole aesthetic.
+ * Voice: warm, first person, short sentences, contractions, a bit of humour,
+ * talking to "you". No invented facts - no years of experience, clients,
+ * results or employers. If a number isn't true, leave it out.
  */
 export const profile = {
 	name: "Kevin Charlie",
@@ -11,7 +12,7 @@ export const profile = {
 	 * TODO(content): one line, under about ten words. This is the promise the
 	 * rest of the page has to keep.
 	 */
-	tagline: "The right person for the job — minus the agency markup.",
+	tagline: "The right person for the job, without the agency detour.",
 
 	/**
 	 * TODO(content): put a real address here to switch the email buttons on.
@@ -27,10 +28,13 @@ export const profile = {
 		github: "https://github.com/NamX1",
 	},
 
-	/** TODO(content): about copy. Casual, credible, two short paragraphs. */
+	/**
+	 * TODO(content): about copy. Two short paragraphs. The word-by-word scroll
+	 * reveal caps each paragraph at 60 words, so keep them under that.
+	 */
 	about: [
-		"I build fast, quiet websites for people who would rather be doing literally anything else. Python, TypeScript, the whole stack — if it loads in under a second and nobody has to squint at it, I did my job.",
-		"No agency, no account manager, no “let’s circle back on that” email. You talk to me, I do the work, and the invoice has exactly one number on it.",
+		"I build websites that load fast and then get out of the way. You tell me what you need, I build it, and you get the only thing that really matters here: a site that just works.",
+		"No account managers, no discovery-call invoice, no “let's circle back”. Just me, the work, and one number on the quote.",
 	],
 } as const;
 
