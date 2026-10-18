@@ -178,9 +178,26 @@
         cursor: pointer;
     }
 
-    /* Text that is decoration rather than information. Never for real copy. */
-    .rule {
-        border-color: color-mix(in oklab, var(--palette-muted) 55%, transparent);
+    /* Kill the double-tap zoom delay and the blue flash on tap. */
+    a,
+    button,
+    [role="button"] {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: color-mix(
+            in oklab,
+            var(--palette-text) 12%,
+            transparent
+        );
+    }
+}
+
+/*
+ * Page-level rubber-band suppression on desktop pointers only. Coarse pointers
+ * keep their defaults so pull-to-refresh and native swipe navigation still work.
+ */
+@media (pointer: fine) {
+    html {
+        overscroll-behavior: none;
     }
 }
 

@@ -30,7 +30,7 @@ export const profile = {
 	/** TODO(content): about copy. Casual, credible, two short paragraphs. */
 	about: [
 		"I build fast, quiet websites for people who would rather be doing literally anything else. Python, TypeScript, the whole stack — if it loads in under a second and nobody has to squint at it, I did my job.",
-		"No agency, no account manager, no \"let's circle back on that\" email. You talk to me, I do the work, and the invoice has exactly one number on it.",
+		"No agency, no account manager, no “let’s circle back on that” email. You talk to me, I do the work, and the invoice has exactly one number on it.",
 	],
 } as const;
 
