@@ -1,5 +1,13 @@
 import { motion } from "motion/react";
 
+import { Badge } from "../ui/badge";
+import {
+	Card,
+	CardAction,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from "../ui/card";
 import { MotionRoot } from "./MotionRoot";
 
 export interface ProjectCardData {
@@ -17,9 +25,10 @@ export interface ProjectCardData {
  * One island for the whole grid rather than one per card: three separate
  * islands would triple the hydration bookkeeping for the same effect.
  *
- * Motion owns the lift (`whileHover`) because the prompt calls for it. Surface
- * brightening is left to CSS so it can transition independently - mixing a
- * 1s reveal duration into the hover would make the lift feel sluggish.
+ * The `<li>` is a bare layout/lift wrapper - all the visual treatment lives on
+ * `Card`. Motion owns the lift (`whileHover`) because the prompt calls for it.
+ * Surface brightening stays in CSS so it can transition independently instead
+ * of inheriting the 1s reveal duration.
  *
  * Cards are deliberately not links yet.
  */
@@ -36,35 +45,36 @@ export default function ProjectGrid({ items }: { items: ProjectCardData[] }) {
 						viewport={{ once: true, amount: 0.3 }}
 						transition={{ duration: 1, ease: "easeOut" }}
 						whileHover={{ y: -4 }}
-						className="glass rounded-lg border p-6 transition-[background-color,border-color] duration-500 ease-out hover:border-ink-2/30 hover:bg-raised/30 sm:p-8"
 					>
-						<div className="flex items-start justify-between gap-4">
-							<h3 className="font-serif text-lead font-light text-ink">
-								{project.title}
-							</h3>
-							<span className="text-label shrink-0 rounded-full border px-3 py-1 uppercase tracking-label text-ink-2">
-								{project.statusLabel}
-							</span>
-						</div>
+						<Card className="glass h-full transition-[background-color,box-shadow] duration-500 ease-out hover:bg-raised/30">
+							<CardHeader>
+								<CardTitle>{project.title}</CardTitle>
+								<CardAction>
+									<Badge variant="secondary">{project.statusLabel}</Badge>
+								</CardAction>
+							</CardHeader>
 
-						{project.summary && (
-							<p className="mt-3 max-w-prose text-body text-ink-2">
-								{project.summary}
-							</p>
-						)}
+							<CardContent className="flex flex-col gap-5">
+								{project.summary && (
+									<p className="max-w-prose text-body text-ink-2">
+										{project.summary}
+									</p>
+								)}
 
-						{project.tech.length > 0 && (
-							<ul className="mt-5 flex flex-wrap gap-x-4 gap-y-2">
-								{project.tech.map((item) => (
-									<li
-										key={item}
-										className="text-label uppercase tracking-label text-ink-2"
-									>
-										{item}
-									</li>
-								))}
-							</ul>
-						)}
+								{project.tech.length > 0 && (
+									<ul className="flex flex-wrap gap-x-4 gap-y-2">
+										{project.tech.map((item) => (
+											<li
+												key={item}
+												className="text-label uppercase tracking-label text-ink-2"
+											>
+												{item}
+											</li>
+										))}
+									</ul>
+								)}
+							</CardContent>
+						</Card>
 					</motion.li>
 				))}
 			</ul>

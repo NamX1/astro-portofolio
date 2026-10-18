@@ -171,6 +171,13 @@
         border-radius: var(--radius);
     }
 
+    /* Tailwind v4 dropped `cursor: pointer` on buttons. These are actions,
+       not plain containers, so put it back. */
+    button:not(:disabled),
+    [role="button"]:not(:disabled) {
+        cursor: pointer;
+    }
+
     /* Text that is decoration rather than information. Never for real copy. */
     .rule {
         border-color: color-mix(in oklab, var(--palette-muted) 55%, transparent);
@@ -190,57 +197,6 @@
 
 @utility section-pad {
     padding-block: var(--spacing-section);
-}
-
-/* ---------------------------------------------------------------------------
- * Buttons.
- *
- * shadcn's <Button> is a React component and its polymorphic `render` prop
- * only accepts a ReactElement, which Astro frontmatter cannot produce. These
- * utilities give the same visual result in both `.astro` and `.tsx` so link
- * buttons look identical wherever they live.
- * ------------------------------------------------------------------------ */
-
-@utility btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    /* Touch target floor. */
-    min-height: 2.75rem;
-    padding-inline: 1.25rem;
-    border-radius: var(--radius);
-    font-size: var(--text-body);
-    line-height: 1;
-    white-space: nowrap;
-    transition:
-        opacity 500ms ease-out,
-        background-color 500ms ease-out,
-        border-color 500ms ease-out;
-}
-
-@utility btn-primary {
-    background-color: var(--primary);
-    color: var(--primary-foreground);
-
-    &:hover {
-        opacity: 0.82;
-    }
-}
-
-@utility btn-outline {
-    border: 1px solid var(--border);
-    color: var(--foreground);
-    background-color: transparent;
-
-    &:hover {
-        border-color: color-mix(in oklab, var(--palette-text) 26%, transparent);
-        background-color: color-mix(
-            in oklab,
-            var(--palette-raised) 45%,
-            transparent
-        );
-    }
 }
 
 /* ---------------------------------------------------------------------------

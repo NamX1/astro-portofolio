@@ -1,9 +1,11 @@
 ---
+import { Separator } from "../ui/separator";
 import { copy } from "../../data/content";
 import { profile } from "../../data/profile";
 ---
 
-<footer class="shell border-t border-border/60 py-10">
+<footer class="shell py-10">
+	<Separator className="mb-8" />
 	<p class="text-label uppercase tracking-label text-ink-2">
 		{copy.footer.line}
 	</p>

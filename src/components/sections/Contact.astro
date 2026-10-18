@@ -1,7 +1,8 @@
 ---
+import { buttonVariants } from "../ui/button";
+import Icon from "../ui/Icon.astro";
 import SectionHeader from "./SectionHeader.astro";
 import Reveal from "../react/Reveal";
-import Icon from "../ui/Icon.astro";
 import { copy } from "../../data/content";
 import { hasEmail, profile } from "../../data/profile";
 
@@ -12,6 +13,9 @@ if (!hasEmail) {
 		"[content] profile.email is empty - the Contact email button is hidden. Set it in src/data/profile.ts to enable.",
 	);
 }
+
+const emailClass = buttonVariants();
+const githubClass = buttonVariants({ variant: "outline" });
 ---
 
 <section id="contact" class="section-pad">
@@ -30,8 +34,8 @@ if (!hasEmail) {
 			<div class="mt-10 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4">
 				{
 					hasEmail && (
-						<a href={`mailto:${profile.email}`} class="btn btn-primary">
-							<Icon name="mail" class="size-4" />
+						<a href={`mailto:${profile.email}`} class={emailClass}>
+							<Icon name="mail" dataIcon="inline-start" />
 							{copy.contact.emailLabel}
 						</a>
 					)
@@ -41,10 +45,10 @@ if (!hasEmail) {
 					href={profile.links.github}
 					target="_blank"
 					rel="noopener noreferrer"
-					class="btn btn-outline"
+					class={githubClass}
 				>
 					{copy.contact.githubLabel}
-					<Icon name="arrow-up-right" class="size-4" />
+					<Icon name="arrow-up-right" dataIcon="inline-end" />
 				</a>
 			</div>
 		</Reveal>

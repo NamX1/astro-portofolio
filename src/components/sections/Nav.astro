@@ -1,18 +1,25 @@
 ---
+import { buttonVariants } from "../ui/button";
 import { nav } from "../../data/content";
+
+/**
+ * `buttonVariants` rather than `<Button render={<a />}>`: the Base UI Button
+ * always applies `role="button"`, which overrides the semantics of a real
+ * link. A plain `<a>` carrying the button classes is the documented fix, and
+ * it works from `.astro` because `buttonVariants` is just a cva helper.
+ */
+const contactClass = buttonVariants({ variant: "outline" });
 ---
 
 <header class="glass sticky top-0 z-50 border-b">
 	<nav aria-label="Primary" class="shell flex h-16 items-center justify-between gap-4">
 		<a
 			href="#top"
-			class="text-label -ml-1 rounded-sm px-1 uppercase tracking-label text-ink-2 transition-colors duration-500 hover:text-ink"
+			class="inline-flex min-h-11 items-center text-label -ml-1 rounded-sm px-1 uppercase tracking-label text-ink-2 transition-colors duration-500 hover:text-ink"
 		>
 			{nav.brand}
 		</a>
 
-		<a href="#contact" class="btn btn-outline">
-			{nav.contactLabel}
-		</a>
+		<a href="#contact" class={contactClass}>{nav.contactLabel}</a>
 	</nav>
 </header>

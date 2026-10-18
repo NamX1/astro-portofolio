@@ -40,10 +40,20 @@ function toMarkup(node: IconNode): string {
 
 interface Props {
 	name: IconName;
+	/**
+	 * Leave unset when the icon sits outside a component. Inside shadcn
+	 * components pass "inline-start" or "inline-end" so the component applies
+	 * its own padding - do not add a size class there, the component sizes it.
+	 *
+	 * Note the camelCase prop name: `.astro` passes attribute names through
+	 * verbatim, so writing `data-icon="..."` here would arrive as a `data-icon`
+	 * prop and silently do nothing.
+	 */
+	dataIcon?: "inline-start" | "inline-end";
 	class?: string;
 }
 
-const { name, class: className = "size-4" } = Astro.props;
+const { name, dataIcon, class: className } = Astro.props;
 ---
 
 <svg
@@ -55,6 +65,7 @@ const { name, class: className = "size-4" } = Astro.props;
 	stroke-linecap="round"
 	stroke-linejoin="round"
 	aria-hidden="true"
+	data-icon={dataIcon}
 	class={className}
 	set:html={toMarkup(icons[name])}
 />

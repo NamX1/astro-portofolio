@@ -1,5 +1,7 @@
 import { motion, type Variants } from "motion/react";
+import { ArrowDown } from "lucide-react";
 
+import { buttonVariants } from "../ui/button";
 import { MotionRoot } from "./MotionRoot";
 
 /**
@@ -78,11 +80,22 @@ export default function HeroEntrance({
 					variants={item}
 					className="mt-10 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center"
 				>
-					<a href={contactHref} className="btn btn-primary">
+					<a
+						href={contactHref}
+						className={buttonVariants({ size: "lg" })}
+					>
 						{contactLabel}
 					</a>
-					<a href="#projects" className="btn btn-outline">
+					<a
+						href="#projects"
+						className={buttonVariants({ variant: "outline", size: "lg" })}
+					>
 						{projectsLabel}
+						<ArrowDown
+							data-icon="inline-end"
+							strokeWidth={1.25}
+							aria-hidden="true"
+						/>
 					</a>
 				</motion.div>
 			</motion.div>
