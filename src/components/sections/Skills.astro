@@ -188,6 +188,12 @@ const marqueeRepeats = 3;
 		gap: 0.625rem;
 		margin-right: 2.5rem;
 		white-space: nowrap;
+		/* Headroom for the hover lift. The icon is the tallest thing in the
+		   row, so without this its top edge sits exactly on the marquee's
+		   clip edge and `overflow: hidden` cuts 2px off it on hover. The
+		   padding is symmetrical, so the icon and the label stay aligned with
+		   each other. */
+		padding-block: 4px;
 	}
 
 	/* Hover and focus are the same affordance: the track stops moving. Focus

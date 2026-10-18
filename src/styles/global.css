@@ -367,9 +367,11 @@
         transform var(--duration-ui) var(--ease-out-apple);
 }
 
-/* :active is transient on every pointer type, so it is safe unguarded. */
+/* :active is transient on every pointer type, so it is safe unguarded.
+   The fallback is for marks with no brand hex - SQL uses a lucide glyph, so
+   it brightens to full ink on hover instead of staying flat. */
 .skill:active svg {
-    color: var(--brand);
+    color: var(--brand, var(--palette-text));
     transform: translateY(-2px);
 }
 
@@ -378,7 +380,7 @@
    once the finger lifts. */
 @media (hover: hover) and (pointer: fine) {
     .skill:hover svg {
-        color: var(--brand);
+        color: var(--brand, var(--palette-text));
         transform: translateY(-2px);
     }
 }
