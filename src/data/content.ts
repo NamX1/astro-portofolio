@@ -44,8 +44,16 @@ export const copy = {
 		label: "Contact",
 		lines: ["Say", "hello."],
 		body: "Tell me what you're after and roughly when. If I'm not the right fit I'll say so, and that costs neither of us anything.",
-		emailLabel: "Send an email",
-		githubLabel: "GitHub",
+		/** TODO(content): the single control that opens the channel panel. */
+		toggleLabel: "Get in touch",
+		channels: {
+			whatsapp: "WhatsApp",
+			email: "Email",
+			github: "GitHub",
+		},
+		/** Screen-reader names for the per-channel copy control. */
+		copyAction: "Copy",
+		copiedLabel: "Copied",
 	},
 	footer: {
 		/** TODO(content): one quiet line. */

@@ -14,12 +14,25 @@ export const profile = {
 	 */
 	tagline: "The right person for the job, without the agency detour.",
 
+	/** TODO(content): swap in the address you actually want on the page. */
+	email: "hello@kevincharlie.dev",
+
 	/**
-	 * TODO(content): put a real address here to switch the email buttons on.
-	 * While this is empty the Contact section hides its email button and the
-	 * build prints a warning.
+	 * WhatsApp. `number` is the only part the wa.me link needs: country code
+	 * and subscriber digits, no `+`, spaces or dashes. `display` is what a
+	 * human reads, so the two are stored side by side rather than derived -
+	 * change one and you must change the other.
 	 */
-	email: "",
+	whatsapp: {
+		number: "6281510767097",
+		display: "+62 815-1076-7097",
+		/**
+		 * TODO(content): set this to open WhatsApp with a message already
+		 * typed, e.g. `text: "Hi Kevin - found you via your site."`. Left off
+		 * so the link opens a blank chat rather than assuming what you say.
+		 */
+		message: undefined as string | undefined,
+	},
 
 	/**
 	 * TODO(content): set this to a city when you want to publish one.
@@ -44,5 +57,9 @@ export const profile = {
 	],
 } as const;
 
-/** Convenience for the Contact section. */
+/**
+ * Both drive a build-time warning, because a contact section that silently
+ * drops a channel you meant to publish is worse than one that tells you.
+ */
 export const hasEmail = profile.email.trim().length > 0;
+export const hasWhatsApp = /^\d{8,15}$/.test(profile.whatsapp.number);

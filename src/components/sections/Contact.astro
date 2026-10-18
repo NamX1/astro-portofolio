@@ -1,21 +1,29 @@
 ---
 import SectionHeading from "../react/SectionHeading";
 import Reveal from "../react/Reveal";
+import ContactPanel from "../react/ContactPanel";
 import { copy } from "../../data/content";
-import { hasEmail, profile } from "../../data/profile";
-import { buttonVariants } from "../ui/button";
-import Icon from "../ui/Icon.astro";
+import { hasEmail, hasWhatsApp } from "../../data/profile";
+import { contactChannels } from "../../data/contact";
 
-// No address on file means no email button. Warn at build time so it does not
-// ship as a silent omission.
+// A channel you meant to publish but have not filled in yet should fail the
+// conversation, not vanish quietly.
 if (!hasEmail) {
 	console.warn(
-		"[content] profile.email is empty - the Contact email button is hidden. Set it in src/data/profile.ts to enable.",
+		"[content] profile.email is empty - the Email channel is hidden. Set it in src/data/profile.ts.",
+	);
+}
+if (!hasWhatsApp) {
+	console.warn(
+		"[content] profile.whatsapp.number is not a valid international number (8-15 digits, no + or dashes) - the WhatsApp channel is hidden.",
 	);
 }
 
-const emailClass = buttonVariants();
-const githubClass = buttonVariants({ variant: "outline" });
+const labels = {
+	toggleLabel: copy.contact.toggleLabel,
+	copyAction: copy.contact.copyAction,
+	copiedLabel: copy.contact.copiedLabel,
+};
 ---
 
 <section id="contact" class="section-pad">
@@ -30,28 +38,45 @@ const githubClass = buttonVariants({ variant: "outline" });
 				<p class="mt-8 max-w-prose font-serif text-lead leading-[1.5] font-light text-ink-2">
 					{copy.contact.body}
 				</p>
-
-				<div class="mt-10 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4">
-					{
-						hasEmail && (
-							<a href={`mailto:${profile.email}`} class={emailClass}>
-								<Icon name="mail" dataIcon="inline-start" />
-								{copy.contact.emailLabel}
-							</a>
-						)
-					}
-
-					<a
-						href={profile.links.github}
-						target="_blank"
-						rel="noopener noreferrer"
-						class={githubClass}
-					>
-						{copy.contact.githubLabel}
-						<Icon name="arrow-up-right" dataIcon="inline-end" />
-					</a>
-				</div>
 			</Reveal>
+
+			<ContactPanel client:load channels={contactChannels} labels={labels} />
 		</SectionHeading>
+
+		{/*
+			The panel only exists once the island hydrates, so without JS the
+			section would show a button that does nothing and no way to reach
+			anyone. This hides the toggle and renders the channels themselves,
+			expanded, inside the section so they stay in the landmark.
+
+			`data-contact-toggle` is set by ContactPanel.tsx and must stay in
+			sync with the selector below.
+		*/}
+		<noscript>
+			<style>
+				[data-contact-toggle] {
+					display: none !important;
+				}
+			</style>
+			<ul class="mt-10">
+				{
+					contactChannels.map((channel) => (
+						<li class="border-t border-border/40 py-4 last:border-b">
+							<a
+								href={channel.href}
+								target={channel.external ? "_blank" : undefined}
+								rel={channel.external ? "noopener noreferrer" : undefined}
+								class="block rounded-sm text-body text-ink underline-offset-4 hover:underline"
+							>
+								<span class="block text-label uppercase tracking-label text-ink-2">
+									{channel.label}
+								</span>
+								<span class="mt-1 block tracking-tight">{channel.value}</span>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</noscript>
 	</div>
 </section>

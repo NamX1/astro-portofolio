@@ -47,6 +47,7 @@ transitions use `--ease-out-apple`.
 | `Reveal` | `client:visible` | Shared short rise + fade for content blocks. |
 | `ProjectGrid` | `client:visible` | Press feedback and hover lift on the cards. One island for all three. |
 | `CertificateGrid` | `client:visible` | Card press feedback plus the detail dialog. Hover/focus styling is pure CSS. |
+| `ContactPanel` | `client:visible` | The contact disclosure: one toggle, three channels, copy-to-clipboard. Falls back to plain links in Contact.astro's `<noscript>`. |
 | `CursorSpotlight` | `client:load` | rAF loop writing `--spot-x/y` and the hero parallax vars. Fine pointers only; idles when the pointer stops. |
 | `SmoothScroll` | `client:load` | Lenis. Desktop pointers only, behind `ENABLE_SMOOTH_SCROLL`. Renders nothing. |
 
