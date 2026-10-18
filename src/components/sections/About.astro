@@ -1,9 +1,36 @@
 ---
-// TODO(design): About stub.
-// Generous vertical spacing. Hierarchy via opacity, not color.
-// Fade + blur-to-sharp reveal on scroll.
+import SectionHeader from "./SectionHeader.astro";
+import Reveal from "../react/Reveal";
+import { copy } from "../../data/content";
+import { profile } from "../../data/profile";
 ---
 
-<section id="about">
-	<h2>About</h2>
+<section id="about" class="section-pad">
+	<div class="shell">
+		<Reveal client:visible>
+			<div class="grid gap-10 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:gap-16">
+				<SectionHeader
+					id="about-heading"
+					label={copy.about.label}
+					heading={copy.about.heading}
+				/>
+
+				<div class="max-w-prose space-y-6">
+					{profile.about.map((paragraph) => (
+						<p class="font-serif text-lead leading-[1.5] font-light text-ink">
+							{paragraph}
+						</p>
+					))}
+
+					{
+						profile.location && (
+							<p class="text-label uppercase tracking-label text-ink-2">
+								{profile.location}
+							</p>
+						)
+					}
+				</div>
+			</div>
+		</Reveal>
+	</div>
 </section>
