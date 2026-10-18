@@ -1,45 +1,43 @@
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import type { ReactNode } from "react";
 
+import { MotionRoot } from "./MotionRoot";
+
 interface RevealProps {
-	children: ReactNode;
+	/** Astro-rendered markup passed in as children. Survives hydration. */
+	children?: ReactNode;
 	className?: string;
-	/** Seconds. Slow by design - see docs/DESIGN.md. */
+	/** Seconds. docs/DESIGN.md asks for 0.8-1.2s. */
 	duration?: number;
 	/** Seconds. */
 	delay?: number;
 }
 
 /**
- * The one sanctioned scroll-reveal primitive. Every Motion island in this
- * project belongs in this folder and must be a `.tsx` file mounted from an
- * `.astro` file with `client:visible`.
+ * Scroll reveal: fade plus blur-to-sharp, once, on entry into view.
  *
- * Timing follows docs/DESIGN.md: slow (0.8-1.2s), ease-out, fade + blur to
- * sharp, no spring/bounce. `prefers-reduced-motion` is honoured by rendering
- * the children plainly.
+ * The pre-reveal state is server-rendered as an inline style. If scripting is
+ * off, or the visitor prefers reduced motion, CSS in global.css forces it back
+ * to fully visible - see the `[data-reveal]` rules and the <noscript> block.
  */
-export function Reveal({
+export default function Reveal({
 	children,
 	className,
 	duration = 1,
 	delay = 0,
 }: RevealProps) {
-	const prefersReducedMotion = useReducedMotion();
-
-	if (prefersReducedMotion) {
-		return <div className={className}>{children}</div>;
-	}
-
 	return (
-		<motion.div
-			className={className}
-			initial={{ opacity: 0, filter: "blur(6px)" }}
-			whileInView={{ opacity: 1, filter: "blur(0px)" }}
-			viewport={{ once: true, amount: 0.3 }}
-			transition={{ duration, delay, ease: "easeOut" }}
-		>
-			{children}
-		</motion.div>
+		<MotionRoot>
+			<motion.div
+				data-reveal=""
+				className={className}
+				initial={{ opacity: 0, filter: "blur(8px)" }}
+				whileInView={{ opacity: 1, filter: "blur(0px)" }}
+				viewport={{ once: true, amount: 0.2 }}
+				transition={{ duration, delay, ease: "easeOut" }}
+			>
+				{children}
+			</motion.div>
+		</MotionRoot>
 	);
 }

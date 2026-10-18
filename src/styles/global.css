@@ -2,22 +2,43 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* Self-hosted fonts. Inter Variable for UI, Instrument Serif for accents. */
+@import "@fontsource-variable/inter";
+@import "@fontsource/instrument-serif/400.css";
+@import "@fontsource/instrument-serif/400-italic.css";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    /* TODO(fonts): undecided. System stack for now; swap in a webfont later. */
-    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-        "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system,
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-serif: "Instrument Serif", ui-serif, Georgia, Cambria,
+        "Times New Roman", serif;
     --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
         "Liberation Mono", monospace;
-    --font-heading: var(--font-sans);
+    --font-heading: var(--font-serif);
+
+    /* Fluid type. 390px is the design floor, 1440px the comfortable ceiling. */
+    --text-label: clamp(0.6875rem, 0.665rem + 0.11vw, 0.78125rem);
+    --text-body: clamp(1rem, 0.955rem + 0.22vw, 1.1875rem);
+    --text-lead: clamp(1.125rem, 1.0rem + 0.62vw, 1.5rem);
+    --text-h2: clamp(1.875rem, 1.36rem + 2.6vw, 3.25rem);
+    --text-hero: clamp(2.5rem, 1.32rem + 5.9vw, 5.5rem);
+    --tracking-label: 0.22em;
+
+    /* Generous vertical rhythm. */
+    --spacing-section: clamp(5.5rem, 13vw, 11rem);
 
     /* Project ink/surface tokens. See the `--palette-*` definitions below. */
     --color-surface: var(--palette-surface);
     --color-raised: var(--palette-raised);
     --color-ink: var(--palette-text);
     --color-ink-2: var(--palette-text-2);
-    /* DECORATIVE ONLY - fails 4.5:1 on --bg. Never use for readable copy. */
+    /*
+     * DECORATIVE ONLY - 3.4:1 on --bg, below the 4.5:1 text threshold.
+     * For hairlines, dividers and inert marks only. Never put readable copy
+     * in this colour; use --color-ink-2 (6.3:1) for secondary text instead.
+     */
     --color-ink-muted: var(--palette-muted);
 
     /* shadcn semantic tokens. Monochrome: every token below is a neutral. */
@@ -82,6 +103,10 @@
     /* Small, near-square corners. */
     --radius: 0.25rem;
 
+    /* Cursor spotlight position. Overwritten per-frame by the island. */
+    --spot-x: 50vw;
+    --spot-y: 35vh;
+
     /* shadcn surface tokens -> raw palette. */
     --background: var(--palette-bg);
     --foreground: var(--palette-text);
@@ -123,11 +148,292 @@
     * {
         @apply border-border outline-ring/50;
     }
+
     html {
         @apply font-sans antialiased;
         color-scheme: dark;
+        /* Keeps native anchor jumps clear of the sticky nav. */
+        scroll-padding-top: 5rem;
+        /* Blobs drift well outside the viewport. */
+        overflow-x: clip;
     }
+
     body {
         @apply bg-background text-foreground;
+        min-height: 100svh;
+        text-rendering: optimizeLegibility;
+    }
+
+    /* Visible focus everywhere, including inside islands. */
+    :focus-visible {
+        outline: 2px solid var(--palette-text-2);
+        outline-offset: 3px;
+        border-radius: var(--radius);
+    }
+
+    /* Text that is decoration rather than information. Never for real copy. */
+    .rule {
+        border-color: color-mix(in oklab, var(--palette-muted) 55%, transparent);
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ * Layout primitives
+ * ------------------------------------------------------------------------ */
+
+@utility shell {
+    width: 100%;
+    max-width: 64rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 3rem);
+}
+
+@utility section-pad {
+    padding-block: var(--spacing-section);
+}
+
+/* ---------------------------------------------------------------------------
+ * Buttons.
+ *
+ * shadcn's <Button> is a React component and its polymorphic `render` prop
+ * only accepts a ReactElement, which Astro frontmatter cannot produce. These
+ * utilities give the same visual result in both `.astro` and `.tsx` so link
+ * buttons look identical wherever they live.
+ * ------------------------------------------------------------------------ */
+
+@utility btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    /* Touch target floor. */
+    min-height: 2.75rem;
+    padding-inline: 1.25rem;
+    border-radius: var(--radius);
+    font-size: var(--text-body);
+    line-height: 1;
+    white-space: nowrap;
+    transition:
+        opacity 500ms ease-out,
+        background-color 500ms ease-out,
+        border-color 500ms ease-out;
+}
+
+@utility btn-primary {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+
+    &:hover {
+        opacity: 0.82;
+    }
+}
+
+@utility btn-outline {
+    border: 1px solid var(--border);
+    color: var(--foreground);
+    background-color: transparent;
+
+    &:hover {
+        border-color: color-mix(in oklab, var(--palette-text) 26%, transparent);
+        background-color: color-mix(
+            in oklab,
+            var(--palette-raised) 45%,
+            transparent
+        );
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ * Glass - nav and cards only. Falls back to solid where backdrop-filter
+ * is unsupported, so text contrast never degrades.
+ * ------------------------------------------------------------------------ */
+
+@utility glass {
+    background-color: color-mix(in oklab, var(--palette-bg) 72%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(115%);
+    backdrop-filter: blur(14px) saturate(115%);
+
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+        background-color: var(--palette-bg);
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ * Background: drifting blobs + cursor spotlight.
+ * Blur radius is static; only transform is ever animated.
+ * ------------------------------------------------------------------------ */
+
+.backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.blob {
+    position: absolute;
+    border-radius: 9999px;
+    /* Static blur. Never animated - animating it is expensive and looks busy. */
+    filter: blur(90px);
+    will-change: transform;
+}
+
+.blob--a {
+    top: -22vh;
+    left: -14vw;
+    width: min(78vw, 62rem);
+    height: min(78vw, 62rem);
+    background: radial-gradient(
+        circle at 50% 50%,
+        color-mix(in oklab, var(--palette-raised) 78%, transparent),
+        transparent 68%
+    );
+}
+
+.blob--b {
+    top: 38vh;
+    right: -22vw;
+    width: min(66vw, 52rem);
+    height: min(66vw, 52rem);
+    background: radial-gradient(
+        circle at 50% 50%,
+        color-mix(in oklab, var(--palette-surface) 88%, transparent),
+        transparent 70%
+    );
+}
+
+.blob--c {
+    bottom: -28vh;
+    left: 22vw;
+    width: min(58vw, 46rem);
+    height: min(58vw, 46rem);
+    background: radial-gradient(
+        circle at 50% 50%,
+        color-mix(in oklab, var(--palette-muted) 26%, transparent),
+        transparent 66%
+    );
+}
+
+/* Base state is completely static. Anything below is opt-in motion. */
+@media (prefers-reduced-motion: no-preference) {
+    /* Fine pointers: slow time-based drift. */
+    @media (hover: hover) and (pointer: fine) {
+        .blob--a {
+            animation: drift-a 52s ease-in-out infinite alternate;
+        }
+        .blob--b {
+            animation: drift-b 64s ease-in-out infinite alternate;
+        }
+        .blob--c {
+            animation: drift-c 76s ease-in-out infinite alternate;
+        }
+    }
+
+    /* Touch: gentle scroll-driven drift instead. Static if unsupported. */
+    @supports (animation-timeline: scroll()) {
+        @media (hover: none) {
+            .blob--a {
+                animation: drift-a linear both;
+                animation-timeline: scroll(root);
+            }
+            .blob--b {
+                animation: drift-b linear both;
+                animation-timeline: scroll(root);
+            }
+            .blob--c {
+                animation: drift-c linear both;
+                animation-timeline: scroll(root);
+            }
+        }
+    }
+}
+
+@keyframes drift-a {
+    from {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    to {
+        transform: translate3d(6vw, 5vh, 0) scale(1.12);
+    }
+}
+
+@keyframes drift-b {
+    from {
+        transform: translate3d(0, 0, 0) scale(1.08);
+    }
+    to {
+        transform: translate3d(-5vw, -7vh, 0) scale(1);
+    }
+}
+
+@keyframes drift-c {
+    from {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    to {
+        transform: translate3d(4vw, -6vh, 0) scale(1.1);
+    }
+}
+
+/* Cursor spotlight. Hidden entirely unless a fine pointer is present. */
+.spotlight {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+        26rem 26rem at var(--spot-x) var(--spot-y),
+        color-mix(in oklab, var(--palette-text) 6%, transparent),
+        transparent 70%
+    );
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .spotlight {
+        opacity: 1;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ * Grain - static SVG feTurbulence, fixed, never interactive.
+ * ------------------------------------------------------------------------ */
+
+.grain {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='180'%20height='180'%3E%3Cfilter%20id='g'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.82'%20numOctaves='4'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='180'%20height='180'%20filter='url(%23g)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 180px 180px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Reveal safety net.
+ *
+ * Motion renders `opacity:0; filter:blur(..)` straight into the HTML at build
+ * time. That is correct for JS-on, but it would hide the content entirely if
+ * the island never hydrates. Two overrides rescue it:
+ *   1. the <noscript> block in Layout.astro, for scripting disabled
+ *   2. this media query, for prefers-reduced-motion
+ * Both need !important to beat Motion's inline style.
+ * ------------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+        opacity: 1 !important;
+        filter: none !important;
+        transform: none !important;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
     }
 }

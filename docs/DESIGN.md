@@ -9,9 +9,13 @@ artwork, typefaces or assets. Monochrome, grainy, dreamy, restrained.
 
 ## Type
 
-- Small, uppercase, wide tracking (0.15–0.3em), light weight.
+- Small, uppercase, wide tracking (0.15–0.3em), light weights.
+- Large light headings.
 - Hero is centered.
-- TODO: fonts undecided. Currently a system font stack.
+- Sans: Inter Variable (self-hosted via Fontsource), for UI, labels and body.
+- Serif: Instrument Serif (self-hosted via Fontsource), for headings and
+  accents. The sans/serif split is the only typographic contrast in the design.
+- Sizes are fluid via `clamp()`; see the `--text-*` tokens in `global.css`.
 
 ## Motion
 
@@ -37,6 +41,8 @@ artwork, typefaces or assets. Monochrome, grainy, dreamy, restrained.
 
 - Through opacity (100 / 60 / 40%), not color.
 - Generous vertical spacing.
+- `--color-ink-muted` (40%) sits at 3.4:1 and is **decoration only** - hairlines
+  and inert marks. Readable secondary text uses `--color-ink-2` (6.3:1).
 
 ## Sections
 

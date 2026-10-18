@@ -1,17 +1,18 @@
 ---
 import "../styles/global.css";
 
-import { profile } from "../data/profile";
+import { seo } from "../data/content";
+import { ENABLE_SPOTLIGHT } from "../lib/config";
 
 interface Props {
 	title?: string;
 	description?: string;
 }
 
-const {
-	title = profile.name,
-	description = profile.role,
-} = Astro.props;
+const { title = seo.title, description = seo.description } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = "/og.png";
 ---
 
 <html lang="en" class="dark">
@@ -21,15 +22,57 @@ const {
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
-		<meta name="description" content={description} />
+
 		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonical} />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content={title} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:image" content={new URL(ogImage, Astro.site)} />
+		<meta property="og:image:alt" content={seo.ogAlt} />
+		<meta property="og:locale" content="en_GB" />
+		<!-- TODO(content): ship a real 1200x630 image at public/og.png. -->
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+
 		<!--
 			TODO: when this becomes a multi-page site, Astro's <ClientRouter />
 			(imported from "astro:transitions") goes here, before </head>.
 			Deliberately not enabled yet - this is a single-page site.
 		-->
+
+		<noscript>
+			<style>
+				/* Motion server-renders the pre-reveal state. Without scripting
+				   there is nothing to animate it away, so force everything
+				   visible. !important is required to beat the inline style. */
+				[data-reveal] {
+					opacity: 1 !important;
+					filter: none !important;
+					transform: none !important;
+				}
+				.blob {
+					animation: none !important;
+				}
+			</style>
+		</noscript>
 	</head>
 	<body>
+		<!-- Fixed, non-interactive atmosphere. Sits behind everything. -->
+		<div class="backdrop" aria-hidden="true">
+			<div class="blob blob--a"></div>
+			<div class="blob blob--b"></div>
+			<div class="blob blob--c"></div>
+		</div>
+		{ENABLE_SPOTLIGHT && <div class="spotlight" aria-hidden="true"></div>}
+		<div class="grain" aria-hidden="true"></div>
+
 		<slot />
 	</body>
 </html>

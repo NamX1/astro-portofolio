@@ -1,0 +1,60 @@
+---
+/**
+ * Static lucide icon for `.astro` markup.
+ *
+ * `lucide-react` components only render from `.tsx`. Sections here are plain
+ * Astro, and shipping a React island just to hold a 24px path would be absurd,
+ * so this renders lucide's own `__iconData` node arrays straight to SVG.
+ *
+ * Same package, same version, same geometry as `lucide-react` renders - just
+ * without the React wrapper. `strokeWidth` is fixed at 1.25 per docs/DESIGN.md.
+ *
+ * If a lucide upgrade ever moves these modules, this is the only file to fix.
+ * Icons used from `.tsx` islands import `lucide-react` directly as normal.
+ */
+import { __iconData as arrowDown } from "lucide-react/dist/esm/icons/arrow-down.mjs";
+import { __iconData as arrowUpRight } from "lucide-react/dist/esm/icons/arrow-up-right.mjs";
+import { __iconData as mail } from "lucide-react/dist/esm/icons/mail.mjs";
+
+type IconNode = readonly (readonly [string, Record<string, string>])[];
+
+const icons: Record<string, IconNode> = {
+	"arrow-down": arrowDown.node,
+	"arrow-up-right": arrowUpRight.node,
+	mail: mail.node,
+};
+
+export type IconName = keyof typeof icons;
+
+function toMarkup(node: IconNode): string {
+	return node
+		.map(([tag, attrs]) => {
+			const pairs = Object.entries(attrs)
+				.filter(([key]) => key !== "key")
+				.map(([key, value]) => `${key}="${value}"`)
+				.join(" ");
+			return `<${tag} ${pairs} />`;
+		})
+		.join("");
+}
+
+interface Props {
+	name: IconName;
+	class?: string;
+}
+
+const { name, class: className = "size-4" } = Astro.props;
+---
+
+<svg
+	xmlns="http://www.w3.org/2000/svg"
+	viewBox="0 0 24 24"
+	fill="none"
+	stroke="currentColor"
+	stroke-width="1.25"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	aria-hidden="true"
+	class={className}
+	set:html={toMarkup(icons[name])}
+/>

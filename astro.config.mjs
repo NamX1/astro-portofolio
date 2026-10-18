@@ -9,6 +9,8 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   // Static output. No adapter, no SSR.
   output: 'static',
+  // Canonical + Open Graph URLs are resolved against this.
+  site: 'https://kevincharlie.dev',
 
   integrations: [react()],
 
