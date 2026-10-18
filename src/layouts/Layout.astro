@@ -1,0 +1,35 @@
+---
+import "../styles/global.css";
+
+import { profile } from "../data/profile";
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const {
+	title = profile.name,
+	description = profile.role,
+} = Astro.props;
+---
+
+<html lang="en" class="dark">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+		<title>{title}</title>
+		<!--
+			TODO: when this becomes a multi-page site, Astro's <ClientRouter />
+			(imported from "astro:transitions") goes here, before </head>.
+			Deliberately not enabled yet - this is a single-page site.
+		-->
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>

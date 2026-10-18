@@ -1,0 +1,133 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    /* TODO(fonts): undecided. System stack for now; swap in a webfont later. */
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+        "Liberation Mono", monospace;
+    --font-heading: var(--font-sans);
+
+    /* Project ink/surface tokens. See the `--palette-*` definitions below. */
+    --color-surface: var(--palette-surface);
+    --color-raised: var(--palette-raised);
+    --color-ink: var(--palette-text);
+    --color-ink-2: var(--palette-text-2);
+    /* DECORATIVE ONLY - fails 4.5:1 on --bg. Never use for readable copy. */
+    --color-ink-muted: var(--palette-muted);
+
+    /* shadcn semantic tokens. Monochrome: every token below is a neutral. */
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/*
+ * Dark only. There is no light theme, so `:root` and `.dark` resolve to the
+ * same palette - that way the page is correct before any class is applied.
+ * Contrast of each ink against `--palette-bg` (#141415):
+ *   --palette-text      #d9d6d1 -> 12.7:1
+ *   --palette-text-2    #9a9792 ->  6.3:1
+ *   --palette-muted     #6b6965 ->  3.4:1  (decorative only)
+ */
+:root,
+.dark {
+    /* Raw palette. Single source of truth for the values below. */
+    --palette-bg: #141415;
+    --palette-surface: #1c1c1e;
+    --palette-raised: #242426;
+    --palette-text: #d9d6d1;
+    --palette-text-2: #9a9792;
+    --palette-muted: #6b6965;
+
+    /* Small, near-square corners. */
+    --radius: 0.25rem;
+
+    /* shadcn surface tokens -> raw palette. */
+    --background: var(--palette-bg);
+    --foreground: var(--palette-text);
+    --card: var(--palette-surface);
+    --card-foreground: var(--palette-text);
+    --popover: var(--palette-raised);
+    --popover-foreground: var(--palette-text);
+    /* No accent hue: "primary" is simply inverted ink on ink. */
+    --primary: var(--palette-text);
+    --primary-foreground: var(--palette-bg);
+    --secondary: var(--palette-raised);
+    --secondary-foreground: var(--palette-text);
+    --muted: var(--palette-surface);
+    --muted-foreground: var(--palette-text-2);
+    --accent: var(--palette-raised);
+    --accent-foreground: var(--palette-text);
+    /* No destructive hue either - error states stay monochrome for now. */
+    --destructive: var(--palette-text-2);
+    --border: color-mix(in oklab, var(--palette-text) 12%, transparent);
+    --input: color-mix(in oklab, var(--palette-text) 16%, transparent);
+    --ring: var(--palette-text-2);
+    /* Greyscale ramp; `--palette-muted` is deliberately unused for data. */
+    --chart-1: var(--palette-text);
+    --chart-2: var(--palette-text-2);
+    --chart-3: var(--palette-raised);
+    --chart-4: var(--palette-surface);
+    --chart-5: var(--palette-muted);
+    --sidebar: var(--palette-surface);
+    --sidebar-foreground: var(--palette-text);
+    --sidebar-primary: var(--palette-text);
+    --sidebar-primary-foreground: var(--palette-bg);
+    --sidebar-accent: var(--palette-raised);
+    --sidebar-accent-foreground: var(--palette-text);
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--palette-text-2);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    html {
+        @apply font-sans antialiased;
+        color-scheme: dark;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
