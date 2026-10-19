@@ -429,81 +429,90 @@
 }
 
 /* ---------------------------------------------------------------------------
- * Certificate cells.
+ * Certificate cards.
  *
- * A credential is a claim: who issued it, what it is, and where to check.
- * The screenshot lives behind a click rather than in the cell, because a
- * certificate screenshot cannot be read at thumbnail size and a light
- * rectangle is the loudest thing on a dark page.
+ * A certificate is a document, so it gets a card and the image stays in it.
+ * The image is the loudest thing on a monochrome page - a sheet of white
+ * paper - so at rest it is greyscaled and dimmed to a paper-grey plate, and
+ * it warms slightly on hover. The lightbox shows the real thing, in colour,
+ * at full size.
  *
- * The cells are a grid, not a stack. That is the answer to "what happens
- * when there are more certificates": the band is a fixed height for a row of
- * cells and the cells fill the row horizontally before the band grows
- * another row, so three certificates cost the same vertical space as one.
- *
- * `auto-fill` rather than `auto-fit` on purpose. `auto-fit` collapses the
- * empty tracks and stretches a lone cell across the whole width, which puts
- * a single credential in a row of dead space. `auto-fill` keeps the tracks
- * at a fixed width, so the cells stay compact and the empty slots read as
- * room for more.
+ * The cards are a grid, so they fill the row horizontally before another row
+ * appears: three per row at 1152px, so the group grows by one row per three
+ * certificates rather than one row per certificate.
  * ------------------------------------------------------------------------ */
 
-.band-items--grid {
+.cert-cards {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-    gap: 0.75rem 1.5rem;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
 }
 
-.cert-cell {
+.cert-card {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
+    gap: 0.875rem;
     width: 100%;
+    padding: 0.625rem;
     text-align: left;
     cursor: pointer;
-    border-radius: 0.25rem;
-    transition: color var(--duration-ui) var(--ease-out-apple);
-}
-
-/* The title gets the full width of the cell and the issuer sits under it.
-   Real certificate titles are long - "AWS Certified Solutions Architect" -
-   and the title needs the whole track to itself, not whatever is left after
-   a tracked uppercase issuer has taken its share. */
-.cert-main {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    width: 100%;
-    min-width: 0;
-}
-
-.cert-issuer {
-    white-space: nowrap;
-}
-
-/* The title shrinks if it has to, but it does not grow. A growing title
-   pushes the expand icon to the far edge of the cell, which on mobile
-   strands it 200px away from the text it belongs to. Each cell should read
-   as one compact unit. */
-.cert-title {
-    flex: 0 1 auto;
-    min-width: 0;
-    text-wrap: pretty;
-}
-
-.cert-expand {
-    flex-shrink: 0;
-    color: var(--palette-text-2);
+    border-radius: 0.5rem;
+    background-color: var(--palette-surface);
+    border: 1px solid rgb(255 255 255 / 0.07);
     transition:
-        color var(--duration-ui) var(--ease-out-apple),
-        transform var(--duration-ui) var(--ease-out-apple);
+        border-color var(--duration-ui) var(--ease-out-apple),
+        background-color var(--duration-ui) var(--ease-out-apple);
 }
 
-.cert-cell:hover .cert-expand,
-.cert-cell:focus-visible .cert-expand {
-    color: var(--palette-text);
-    transform: scale(1.15);
+.cert-card:hover {
+    border-color: rgb(255 255 255 / 0.16);
+    background-color: var(--palette-raised);
+}
+
+/* The document sits inside the card on a raised mat, the way a sheet of
+   paper sits on a desk. */
+.cert-frame {
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: 0.25rem;
+    background-color: var(--palette-raised);
+}
+
+.cert-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* A sheet of white paper is the brightest thing on a dark page, whatever
+       filter you put on it. Inverting it makes the certificate read as
+       light-on-dark, native to the page instead of a light rectangle sitting
+       on it. hue-rotate(180) puts the hues back afterwards - the HackerRank
+       green stays green rather than turning magenta.
+
+       brightness is held down because the black banner around "Python
+       (Basic)" inverts to near-white, and at full brightness it becomes a
+       white bar across the middle of the card. */
+    filter: invert(1) hue-rotate(180deg) brightness(0.78) contrast(0.95);
+    transition: filter var(--duration-ui) var(--ease-out-apple);
+}
+
+/* Hover lifts it back toward the original document, so the card previews
+   the thing it opens. */
+.cert-card:hover .cert-image {
+    filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(1);
+}
+
+.cert-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.cert-title {
+    text-wrap: pretty;
 }
 
 /* ---------------------------------------------------------------------------

@@ -4,7 +4,7 @@ import { getImage } from "astro:assets";
 import SkillMark from "../ui/SkillMark.astro";
 import SectionHeading from "../react/SectionHeading";
 import BandReveal from "../react/BandReveal";
-import CertificateBand from "../react/CertificateBand";
+import CertificateCards from "../react/CertificateCards";
 import { copy } from "../../data/content";
 import { marqueeSkills, skillGroups } from "../../data/skills";
 import { certificates } from "../../data/certificates";
@@ -35,7 +35,10 @@ const items = await Promise.all(
 	certificates.map(async (certificate) => {
 		const image = await getImage({
 			src: certificate.image,
-			width: certificate.image.width,
+			// The card renders the certificate at roughly 270px wide and the
+			// lightbox at 640px, so 800/1200 covers both at 2x without
+			// upscaling the 1600px source.
+			width: 800,
 			format: "webp",
 			densities: [1, 1.5],
 		});
@@ -146,12 +149,16 @@ const marqueeRepeats = 3;
 			)
 		}
 
+		{/*
+			Credentials are documents, so they get cards and the certificate
+			image stays in them. The workflow group above is a list of tools;
+			the contrast between the two treatments is the point.
+		*/}
 		<div class="mt-16 sm:mt-20">
-			<CertificateBand
-				client:visible
-				items={items}
-				label={copy.credentials.label}
-			/>
+			<h3 class="text-label uppercase tracking-label text-ink-2">
+				{copy.credentials.label}
+			</h3>
+			<CertificateCards client:visible items={items} />
 		</div>
 	</div>
 </section>

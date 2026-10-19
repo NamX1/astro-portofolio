@@ -31,20 +31,17 @@ const imagesBySlug = new Map<string, ImageMetadata>(
 );
 
 /**
- * TODO(content): `issued` and `summary` are intentionally absent on the entry
- * below. Leaving them out means nothing renders in their place - add them when
- * you have real values rather than inventing some.
+ * The certificate image is the screenshot embedded in the HackerRank PDF,
+ * extracted losslessly rather than re-rendered from the page.
  */
 const input: CertificateInput[] = [
 	{
 		title: "Python (Basic)",
 		issuer: "HackerRank",
+		issued: 2024,
 		verifyUrl: "https://www.hackerrank.com/certificates/d5f710b194af",
 		image: "hackerrank-python-basic",
-		// TODO(content): this describes the real certificate once the actual
-		// screenshot replaces the placeholder in src/assets/certificates/.
-		// Avoid the word "placeholder" - screen readers read this out loud.
-		alt: "HackerRank Python (Basic) certificate awarded for passing the Python Basic skills test.",
+		alt: "HackerRank Certificate of Accomplishment for Python (Basic), issued to Kevin Charlie on 15 July 2024.",
 	},
 ];
 

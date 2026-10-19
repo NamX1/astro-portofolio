@@ -85,7 +85,7 @@ landing. Text over glass must still clear 4.5:1.
 
 ## Sections
 
-Hero, About, Skills (marquee + grouped block + Credentials), Projects, Contact.
+Hero, About, Skills (marquee + workflow band + certificate cards), Projects, Contact.
 
 ## Skills
 
@@ -111,11 +111,14 @@ seven stay readable.
 
 ### The bands
 
-The grouped block and the credentials are both **ruled bands**: a hairline
-above, a hairline below, a group label anchored left, the contents in the
-rest of the width. It is the still counterpart to the marquee directly above
-them — a title plate under a title sequence, which is the end-credit language
-this page borrows from.
+The grouped block is a **ruled band**: a hairline above, a hairline below, a
+group label anchored left, the contents in the rest of the width. It is the
+still counterpart to the marquee directly above it — a title plate under a
+title sequence, which is the end-credit language this page borrows from.
+
+The credentials are *not* a band. They are cards, and they sit under a plain
+group label. The contrast between the two treatments is the point: a list of
+tools is a ruled index, a set of documents is a gallery.
 
 The earlier version of the grouped block was a label plus three
 icon-and-word pairs clustered in the left third of the column. Under a
@@ -134,34 +137,56 @@ rules and items it does not own. The band rules live in `global.css` for the
 same reason `.skill` does: the trigger is set across an island boundary, and
 Astro scopes a component's `<style>` to its own scope id.
 
-### The credentials band
+### The certificates
 
-A credential is a claim, and a claim reads best small: who issued it, what it
-is, and where to check. The screenshot is the least useful part of a
-certificate — it cannot be read at thumbnail size, and a light rectangle on a
-dark page is the loudest thing on it — so it lives behind a click rather than
-taking up space.
+Credentials are **cards**, not a list. A certificate is a document, so it gets
+a document card and the image stays in it — the certificate itself is the one
+thing that makes a credential legible at a glance.
 
-The cells are a **grid, not a stack**, and that is the answer to "what happens
-when there are more certificates". The band is a fixed height for a row of
-cells, and the cells fill the row horizontally before the band grows another
-row. Measured at 1152px: three certificates per row, and the band grows one
-61px row per *three* certificates. Nine certificates occupy three rows inside
-one band.
+A sheet of white paper is the brightest thing on a dark page, whatever filter
+you put on it. So the image is **inverted**: `invert(1) hue-rotate(180deg)`
+turns the paper dark and the text light, so the certificate reads as
+light-on-dark and is native to the page rather than a light rectangle sitting
+on it. `hue-rotate(180deg)` puts the hues back afterwards, so the HackerRank
+green stays green instead of turning magenta. `brightness` is held at 0.78
+because the black banner around "Python (Basic)" inverts to near-white and
+would otherwise become a white bar across the middle of the card.
 
-`auto-fill`, not `auto-fit`: `auto-fit` collapses the empty tracks and
-stretches a lone cell across the whole width, which puts a single credential
-in a row of dead space. `auto-fill` keeps the tracks fixed, so the cells stay
-compact and the empty slots read as room for more.
+The lightbox shows the **real** document, in full colour, at full size. The
+card is a dark-mode preview; the lightbox is the thing itself.
 
-The cell is title over issuer, not issuer over title. Real certificate titles
-are long — "AWS Certified Solutions Architect" — and the title needs the whole
-track to itself, not whatever is left after a tracked uppercase issuer has
-taken its share.
+The title is set in the **display serif**, not UI type. The page's whole
+typographic voice is Instrument Serif, and a card caption in Inter reads like
+a settings panel rather than a portfolio.
+
+The cards are a **grid**, so they fill the row horizontally before another row
+appears: three per row at 1152px, so the group grows by one row per three
+certificates rather than one row per certificate. `auto-fill`, not `auto-fit`:
+`auto-fit` collapses the empty tracks and stretches a lone card across the
+whole width.
 
 **The old hover overlay is gone.** It had `pointer-events: none`, which made
 its "Verify credential" link unreachable: the hit test landed on the thumbnail
 underneath. The link now lives in the lightbox, where it is a real button.
+
+**No `aria-label` on the card.** An explicit label would have to restate the
+visible text, and anything short of an exact match fails WCAG 2.5.3, Label in
+Name — Lighthouse caught it. The name comes from the visible text instead,
+with a real space between the title and the issuer so it reads "Python
+(Basic) HackerRank" rather than running them together. The space collapses
+visually: the meta block is a flex column, and a whitespace-only child is not
+rendered as a flex item.
+
+### The certificate image
+
+The file in `src/assets/certificates/` is the screenshot **embedded in the
+HackerRank PDF**, extracted losslessly with PyMuPDF rather than re-rendered
+from the page. The PDF holds one 1600×1200 PNG; extracting it avoids a
+resample. `getImage()` then produces 800/1200 webp for the card and the
+lightbox.
+
+The certificate is real, so the data is real: issued 2024, and an alt text
+naming the issuer, the certification and the date.
 
 ## Contact
 
