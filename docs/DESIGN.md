@@ -213,19 +213,17 @@ issuer is one entry in a lookup table.
 
 Three compact cards in a row, one per channel. No toggle, no panel: the
 channels are visible directly, which is what a contact section is for. Each
-card is a link to its channel, with a small copy control in the corner.
+card is a single button: one click opens the channel - WhatsApp chat, email
+compose, GitHub profile - directly. The address is still selectable text, but
+the primary action is to message, not to copy.
 
 - The cards are a grid, so they fill the row horizontally before another
   row appears: three per row at 1152px, so the section grows by one row per
   three channels rather than one row per channel.
-- The link and the copy control are **siblings**, not nested. An interactive
-  element inside a link is a keyboard trap and a broken tap target.
-- `value` is what a human reads, `copyValue` is what lands on the clipboard -
-  they differ for GitHub, where nobody types `https://` into a message.
-- Confirmation is an inline icon swap plus an `aria-live` region; the swap
-  alone is invisible to a screen reader.
-- Without JS the island never hydrates and the copy buttons are inert, so
-  Contact.astro ships a `<noscript>` that prints the three channels as plain
-  links. The island server-renders the cards, so they still appear.
+- Each card carries a small arrow in the corner that moves on hover, so the
+  action reads as "opens something" rather than "runs something".
 - The section is quiet: compact cards, muted text, small. It is the last
   section on the page and does not dominate.
+- Without JS the island never hydrates and the buttons are inert, so
+  Contact.astro ships a `<noscript>` that prints the three channels as plain
+  links. The island server-renders the cards, so they still appear.

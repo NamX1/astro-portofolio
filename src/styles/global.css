@@ -595,17 +595,19 @@
     word-break: break-word;
 }
 
-.contact-card-copy {
+.contact-card-arrow {
     position: absolute;
-    top: 0.625rem;
-    right: 0.625rem;
+    top: 1rem;
+    right: 1rem;
     color: var(--palette-text-2);
-    transition: color var(--duration-ui) var(--ease-out-apple);
+    transition: color var(--duration-ui) var(--ease-out-apple),
+        transform var(--duration-ui) var(--ease-out-apple);
 }
 
-.contact-card-copy:hover,
-.contact-card-copy:focus-visible {
+.contact-card:hover .contact-card-arrow,
+.contact-card:focus-visible .contact-card-arrow {
     color: var(--palette-text);
+    transform: translate(2px, -2px);
 }
 
 /* ---------------------------------------------------------------------------

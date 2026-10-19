@@ -19,10 +19,7 @@ if (!hasWhatsApp) {
 	);
 }
 
-const labels = {
-	copyAction: copy.contact.copyAction,
-	copiedLabel: copy.contact.copiedLabel,
-};
+// No labels needed - the card is a single button with no copy affordance.
 ---
 
 <section id="contact" class="section-pad">
@@ -42,7 +39,7 @@ const labels = {
 			{/* The channels are visible directly, no toggle. The island
 			    server-renders the cards, so they appear even without JS;
 			    only the copy button needs hydration. */}
-			<ContactCards client:visible channels={contactChannels} labels={labels} />
+			<ContactCards client:visible channels={contactChannels} />
 		</SectionHeading>
 	</div>
 </section>
