@@ -45,9 +45,9 @@ transitions use `--ease-out-apple`.
 | `SectionHeading` | `client:visible` | Line-by-line mask-up heading. Also carries each section's content as children, so it is usually the only island a section needs. |
 | `WordReveal` | `client:visible` | About copy brightens word by word against scroll position. |
 | `Reveal` | `client:visible` | Shared short rise + fade for content blocks. |
-| `BandReveal` | `client:visible` | Sets `data-band` on the skill band so the stylesheet can draw its rules in. Not Motion - Motion cannot flip a descendant's transition. |
+| `BandReveal` | `client:visible` | Sets `data-band` on the workflow band so the stylesheet can draw its rules in. Not Motion - Motion cannot flip a descendant's transition. |
 | `ProjectGrid` | `client:visible` | Press feedback and hover lift on the cards. One island for all three. |
-| `CertificateGrid` | `client:visible` | Card press feedback plus the detail dialog. Hover/focus styling is pure CSS. |
+| `CertificateBand` | `client:visible` | The credentials band: cells in a grid, plus the lightbox. The image lives behind a click. |
 | `ContactPanel` | `client:visible` | The contact disclosure: one toggle, three channels, copy-to-clipboard. Falls back to plain links in Contact.astro's `<noscript>`. |
 | `CursorSpotlight` | `client:load` | rAF loop writing `--spot-x/y` and the hero parallax vars. Fine pointers only; idles when the pointer stops. |
 | `SmoothScroll` | `client:load` | Lenis. Desktop pointers only, behind `ENABLE_SMOOTH_SCROLL`. Renders nothing. |

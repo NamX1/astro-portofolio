@@ -280,75 +280,6 @@
 }
 
 /* ---------------------------------------------------------------------------
- * Certificate cards.
- *
- * Hover is written out rather than using `group-hover:` because Tailwind emits
- * a bare `:hover` - on touch that sticks after a tap and the overlay would
- * flash open. Hover-capable pointers get the reveal; keyboard focus gets it
- * everywhere; touch gets the caption under the thumbnail instead.
- * ------------------------------------------------------------------------ */
-
-.cert-thumb {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    /* Dimmed at rest so a bright certificate does not glare on a dark page. */
-    opacity: 0.55;
-    filter: grayscale(0.55) brightness(0.9);
-    transition:
-        transform var(--duration-reveal) var(--ease-out-apple),
-        filter var(--duration-reveal) var(--ease-out-apple),
-        opacity var(--duration-reveal) var(--ease-out-apple);
-}
-
-/* Glass surface + a legibility gradient under the copy. */
-.cert-panel {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    padding: 3rem 1rem 1rem;
-    /* Resting offset is the 8px the reveal travels from. */
-    opacity: 0;
-    transform: translateY(8px);
-    pointer-events: none;
-    background-color: rgb(28 28 30 / 0.6);
-    background-image: linear-gradient(to top, var(--palette-surface), transparent 70%);
-    -webkit-backdrop-filter: blur(20px) saturate(1.4);
-    backdrop-filter: blur(20px) saturate(1.4);
-    transition:
-        transform var(--duration-ui) var(--ease-out-apple),
-        opacity var(--duration-ui) var(--ease-out-apple);
-}
-
-.cert-group:focus-visible .cert-thumb {
-    transform: scale(1.02);
-    filter: grayscale(0) brightness(1);
-    opacity: 1;
-}
-
-.cert-group:focus-visible .cert-panel {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-@media (hover: hover) and (pointer: fine) {
-    .cert-group:hover .cert-thumb {
-        transform: scale(1.02);
-        filter: grayscale(0) brightness(1);
-        opacity: 1;
-    }
-
-    .cert-group:hover .cert-panel {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ---------------------------------------------------------------------------
  * Skill marks.
  *
  * Lives here rather than in Skills.astro for the same reason `.cert-*` does:
@@ -433,7 +364,7 @@
 
 @media (min-width: 40rem) {
     .band-row {
-        grid-template-columns: 9rem 1fr;
+        grid-template-columns: 7.5rem 1fr;
         align-items: center;
         gap: 2.5rem;
         padding-block: 1.75rem;
@@ -495,6 +426,84 @@
 [data-band="in"] .band-item {
     opacity: 1;
     transform: none;
+}
+
+/* ---------------------------------------------------------------------------
+ * Certificate cells.
+ *
+ * A credential is a claim: who issued it, what it is, and where to check.
+ * The screenshot lives behind a click rather than in the cell, because a
+ * certificate screenshot cannot be read at thumbnail size and a light
+ * rectangle is the loudest thing on a dark page.
+ *
+ * The cells are a grid, not a stack. That is the answer to "what happens
+ * when there are more certificates": the band is a fixed height for a row of
+ * cells and the cells fill the row horizontally before the band grows
+ * another row, so three certificates cost the same vertical space as one.
+ *
+ * `auto-fill` rather than `auto-fit` on purpose. `auto-fit` collapses the
+ * empty tracks and stretches a lone cell across the whole width, which puts
+ * a single credential in a row of dead space. `auto-fill` keeps the tracks
+ * at a fixed width, so the cells stay compact and the empty slots read as
+ * room for more.
+ * ------------------------------------------------------------------------ */
+
+.band-items--grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 0.75rem 1.5rem;
+}
+
+.cert-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    transition: color var(--duration-ui) var(--ease-out-apple);
+}
+
+/* The title gets the full width of the cell and the issuer sits under it.
+   Real certificate titles are long - "AWS Certified Solutions Architect" -
+   and the title needs the whole track to itself, not whatever is left after
+   a tracked uppercase issuer has taken its share. */
+.cert-main {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    min-width: 0;
+}
+
+.cert-issuer {
+    white-space: nowrap;
+}
+
+/* The title shrinks if it has to, but it does not grow. A growing title
+   pushes the expand icon to the far edge of the cell, which on mobile
+   strands it 200px away from the text it belongs to. Each cell should read
+   as one compact unit. */
+.cert-title {
+    flex: 0 1 auto;
+    min-width: 0;
+    text-wrap: pretty;
+}
+
+.cert-expand {
+    flex-shrink: 0;
+    color: var(--palette-text-2);
+    transition:
+        color var(--duration-ui) var(--ease-out-apple),
+        transform var(--duration-ui) var(--ease-out-apple);
+}
+
+.cert-cell:hover .cert-expand,
+.cert-cell:focus-visible .cert-expand {
+    color: var(--palette-text);
+    transform: scale(1.15);
 }
 
 /* ---------------------------------------------------------------------------

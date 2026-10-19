@@ -109,30 +109,59 @@ hover, and WCAG 2.2.2 asks for a way to stop auto-moving content. Under
 `prefers-reduced-motion` the scroll stops and the list wraps once, so all
 seven stay readable.
 
-### The band
+### The bands
 
-The grouped block is a **ruled band**, not a list: a hairline above, a
-hairline below, the group label anchored left, the items spread across the
+The grouped block and the credentials are both **ruled bands**: a hairline
+above, a hairline below, a group label anchored left, the contents in the
 rest of the width. It is the still counterpart to the marquee directly above
-it — a title plate under a title sequence, which is the end-credit language
+them — a title plate under a title sequence, which is the end-credit language
 this page borrows from.
 
-The earlier version was a label plus three icon-and-word pairs clustered in
-the left third of the column. Under a full-bleed marquee that read as a stray
-list, and a list of tools is the generic way to show tools. The band fixes
-the composition — the block now spans the full column — and gives the tools a
-reason to be structured.
+The earlier version of the grouped block was a label plus three
+icon-and-word pairs clustered in the left third of the column. Under a
+full-bleed marquee that read as a stray list, and a list of tools is the
+generic way to show tools. The band fixes the composition — the block now
+spans the full column — and gives the tools a reason to be structured.
 
-Its entrance is the same shutter gesture: the top rule draws in from the left,
+The entrance is the same shutter gesture: the top rule draws in from the left,
 the items rise in sequence, the bottom rule closes from the right. One
 authored moment, horizontal, slower than the marquee.
 
-`BandReveal.tsx` sets `data-band` and the stylesheet does the rest. It is
+`useBandReveal()` sets `data-band` and the stylesheet does the rest. It is
 deliberately not Motion — Motion animates inline styles on the element it is
 given and cannot flip a descendant's transition, and the band needs to drive
 rules and items it does not own. The band rules live in `global.css` for the
-same reason `.skill` and `.cert-*` do: the trigger is set across an island
-boundary, and Astro scopes a component's `<style>` to its own scope id.
+same reason `.skill` does: the trigger is set across an island boundary, and
+Astro scopes a component's `<style>` to its own scope id.
+
+### The credentials band
+
+A credential is a claim, and a claim reads best small: who issued it, what it
+is, and where to check. The screenshot is the least useful part of a
+certificate — it cannot be read at thumbnail size, and a light rectangle on a
+dark page is the loudest thing on it — so it lives behind a click rather than
+taking up space.
+
+The cells are a **grid, not a stack**, and that is the answer to "what happens
+when there are more certificates". The band is a fixed height for a row of
+cells, and the cells fill the row horizontally before the band grows another
+row. Measured at 1152px: three certificates per row, and the band grows one
+61px row per *three* certificates. Nine certificates occupy three rows inside
+one band.
+
+`auto-fill`, not `auto-fit`: `auto-fit` collapses the empty tracks and
+stretches a lone cell across the whole width, which puts a single credential
+in a row of dead space. `auto-fill` keeps the tracks fixed, so the cells stay
+compact and the empty slots read as room for more.
+
+The cell is title over issuer, not issuer over title. Real certificate titles
+are long — "AWS Certified Solutions Architect" — and the title needs the whole
+track to itself, not whatever is left after a tracked uppercase issuer has
+taken its share.
+
+**The old hover overlay is gone.** It had `pointer-events: none`, which made
+its "Verify credential" link unreachable: the hit test landed on the thumbnail
+underneath. The link now lives in the lightbox, where it is a real button.
 
 ## Contact
 

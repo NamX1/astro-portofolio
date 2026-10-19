@@ -3,9 +3,8 @@ import { getImage } from "astro:assets";
 
 import SkillMark from "../ui/SkillMark.astro";
 import SectionHeading from "../react/SectionHeading";
-import Reveal from "../react/Reveal";
 import BandReveal from "../react/BandReveal";
-import CertificateGrid from "../react/CertificateGrid";
+import CertificateBand from "../react/CertificateBand";
 import { copy } from "../../data/content";
 import { marqueeSkills, skillGroups } from "../../data/skills";
 import { certificates } from "../../data/certificates";
@@ -17,8 +16,9 @@ import { certificates } from "../../data/certificates";
  * React island. getImage() is the documented equivalent for that case and
  * returns the same optimised output, which we pass down as plain props.
  *
- * Two sizes: a thumbnail for the grid, a full-size one for the dialog.
- * `densities` produces the srcset (getImage has no `sizes` option).
+ * One size, for the lightbox. The cell itself shows no image - a credential
+ * reads as issuer, title and a link, and the screenshot is a document, not a
+ * thumbnail. `densities` produces the srcset (getImage has no `sizes` option).
  */
 function toSrcSet(
 	srcSet: { values: { url: string; descriptor?: string }[] } | undefined,
@@ -33,16 +33,11 @@ function toSrcSet(
 
 const items = await Promise.all(
 	certificates.map(async (certificate) => {
-		const thumb = await getImage({
-			src: certificate.image,
-			width: 800,
-			format: "webp",
-			densities: [1, 1.5],
-		});
-		const large = await getImage({
+		const image = await getImage({
 			src: certificate.image,
 			width: certificate.image.width,
 			format: "webp",
+			densities: [1, 1.5],
 		});
 
 		return {
@@ -52,17 +47,11 @@ const items = await Promise.all(
 			alt: certificate.alt,
 			issued: certificate.issued,
 			summary: certificate.summary,
-			thumb: {
-				src: thumb.src,
-				width: Number(thumb.attributes.width),
-				height: Number(thumb.attributes.height),
-				srcSet: toSrcSet(thumb.srcSet),
-			},
-			large: {
-				src: large.src,
-				width: Number(large.attributes.width),
-				height: Number(large.attributes.height),
-				srcSet: toSrcSet(large.srcSet),
+			image: {
+				src: image.src,
+				width: Number(image.attributes.width),
+				height: Number(image.attributes.height),
+				srcSet: toSrcSet(image.srcSet),
 			},
 			labels: { verifyAction: copy.credentials.verifyAction },
 		};
@@ -157,10 +146,12 @@ const marqueeRepeats = 3;
 			)
 		}
 
-		<div class="mt-20 sm:mt-24">
-			<Reveal client:visible>
-				<CertificateGrid client:visible items={items} />
-			</Reveal>
+		<div class="mt-16 sm:mt-20">
+			<CertificateBand
+				client:visible
+				items={items}
+				label={copy.credentials.label}
+			/>
 		</div>
 	</div>
 </section>
