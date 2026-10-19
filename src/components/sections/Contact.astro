@@ -1,10 +1,9 @@
 ---
 import SectionHeading from "../react/SectionHeading";
 import Reveal from "../react/Reveal";
-import ContactCards from "../react/ContactCards";
+import Icon from "../ui/Icon.astro";
 import { copy } from "../../data/content";
-import { hasEmail, hasWhatsApp } from "../../data/profile";
-import { contactChannels } from "../../data/contact";
+import { hasEmail, hasWhatsApp, profile } from "../../data/profile";
 
 // A channel you meant to publish but have not filled in yet should fail the
 // conversation, not vanish quietly.
@@ -19,7 +18,9 @@ if (!hasWhatsApp) {
 	);
 }
 
-// No labels needed - the card is a single button with no copy affordance.
+const waMeUrl = `https://wa.me/${profile.whatsapp.number}${
+	profile.whatsapp.message ? `?text=${encodeURIComponent(profile.whatsapp.message)}` : ""
+}`;
 ---
 
 <section id="contact" class="section-pad">
@@ -36,38 +37,44 @@ if (!hasWhatsApp) {
 				</p>
 			</Reveal>
 
-			{/* The channels are visible directly, no toggle. The island
-			    server-renders the cards, so they appear even without JS;
-			    only the copy button needs hydration. */}
-			<ContactCards client:visible channels={contactChannels} />
+			<div class="action-pair mt-10">
+				{hasEmail && (
+					<a
+						href={`mailto:${profile.email}`}
+						class="action-link"
+					>
+						<Icon name="mail" class="action-link-icon" />
+						<span class="action-link-label">Email</span>
+						<span class="action-link-value">{profile.email}</span>
+						<Icon name="arrow-up-right" class="action-link-arrow" />
+					</a>
+				)}
+
+				{hasWhatsApp && (
+					<a
+						href={waMeUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="action-link"
+					>
+						<Icon name="message-circle" class="action-link-icon" />
+						<span class="action-link-label">WhatsApp</span>
+						<span class="action-link-value">{profile.whatsapp.display}</span>
+						<Icon name="arrow-up-right" class="action-link-arrow" />
+					</a>
+				)}
+			</div>
+
+			<hr class="quiet-line" />
+
+			<a
+				href={profile.links.github}
+				target="_blank"
+				rel="noopener noreferrer"
+				class="github-link"
+			>
+				GitHub
+			</a>
 		</SectionHeading>
 	</div>
 </section>
-
-{/*
-	Without JS the island never hydrates and the copy buttons are inert, so
-	the plain links below are the reachable fallback.
-*/}
-<noscript>
-	<ul class="shell mt-10 grid grid-cols-1 gap-3 sm:grid-cols-3">
-		{
-			contactChannels.map((channel) => (
-				<li class="border border-border/40 bg-surface p-4">
-					<a
-						href={channel.href}
-						target={channel.external ? "_blank" : undefined}
-						rel={channel.external ? "noopener noreferrer" : undefined}
-						class="block"
-					>
-						<span class="block text-label uppercase tracking-label text-ink-2">
-							{channel.label}
-						</span>
-						<span class="mt-2 block text-body text-ink tracking-tight">
-							{channel.value}
-						</span>
-					</a>
-				</li>
-			))
-		}
-	</ul>
-</noscript>

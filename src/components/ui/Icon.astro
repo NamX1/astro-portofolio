@@ -16,6 +16,7 @@ import { __iconData as arrowDown } from "lucide-react/dist/esm/icons/arrow-down.
 import { __iconData as arrowUpRight } from "lucide-react/dist/esm/icons/arrow-up-right.mjs";
 import { __iconData as database } from "lucide-react/dist/esm/icons/database.mjs";
 import { __iconData as mail } from "lucide-react/dist/esm/icons/mail.mjs";
+import { __iconData as messageCircle } from "lucide-react/dist/esm/icons/message-circle.mjs";
 
 type IconNode = readonly (readonly [string, Record<string, string>])[];
 
@@ -24,6 +25,7 @@ const icons: Record<string, IconNode> = {
 	"arrow-up-right": arrowUpRight.node,
 	database: database.node,
 	mail: mail.node,
+	"message-circle": messageCircle.node,
 };
 
 export type IconName = keyof typeof icons;
