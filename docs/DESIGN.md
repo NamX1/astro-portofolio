@@ -159,6 +159,10 @@ The title is set in the **display serif**, not UI type. The page's whole
 typographic voice is Instrument Serif, and a card caption in Inter reads like
 a settings panel rather than a portfolio.
 
+The card has **no mat**: the certificate is flush to the card's edges, and
+the card clips it with its own radius. A padded frame around the document
+reads as "an image of a certificate"; flush reads as the certificate itself.
+
 The cards are a **grid**, so they fill the row horizontally before another row
 appears: three per row at 1152px, so the group grows by one row per three
 certificates rather than one row per certificate. `auto-fill`, not `auto-fit`:
@@ -185,8 +189,28 @@ from the page. The PDF holds one 1600×1200 PNG; extracting it avoids a
 resample. `getImage()` then produces 800/1200 webp for the card and the
 lightbox.
 
+Two things about that extraction matter:
+
+- The PDF stores the colour image and a **separate soft mask**. The mask is
+  what draws the certificate's rounded corners. Extracting the colour image on
+  its own flattens those transparent corners to **black**, which the card's
+  invert filter then turns **white** — a bright notch in the corner of every
+  card. The file keeps the alpha.
+- The file is **cropped to the certificate's inner panel**, inside the
+  ornamental guilloche band. At card size that band is grey mush, and the
+  parts worth reading are the name, the date and the signature. The frame's
+  aspect ratio is `1476 / 1076` to match.
+
 The certificate is real, so the data is real: issued 2024, and an alt text
 naming the issuer, the certification and the date.
+
+### The issuer mark
+
+Each card carries the issuer's **brand mark** next to their name, from
+`simple-icons`. It is grey at rest like every other brand mark on the page
+and picks up its brand colour on hover, so it never fights the certificate
+for attention. `src/data/certificates.ts` resolves it from a slug, so a new
+issuer is one entry in a lookup table.
 
 ## Contact
 

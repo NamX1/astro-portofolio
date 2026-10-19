@@ -445,18 +445,20 @@
 .cert-cards {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-    gap: 1.5rem;
-    margin-top: 1.5rem;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
 }
 
 .cert-card {
     display: flex;
     flex-direction: column;
-    gap: 0.875rem;
     width: 100%;
-    padding: 0.625rem;
     text-align: left;
     cursor: pointer;
+    /* The card clips the certificate, so the certificate's own rounded
+       corners are the card's corners. No mat, no padding - the document is
+       the face of the card. */
+    overflow: hidden;
     border-radius: 0.5rem;
     background-color: var(--palette-surface);
     border: 1px solid rgb(255 255 255 / 0.07);
@@ -470,14 +472,14 @@
     background-color: var(--palette-raised);
 }
 
-/* The document sits inside the card on a raised mat, the way a sheet of
-   paper sits on a desk. */
 .cert-frame {
     display: block;
-    aspect-ratio: 4 / 3;
+    /* Matches the cropped certificate asset: 1476 x 1076. */
+    aspect-ratio: 1476 / 1076;
     overflow: hidden;
-    border-radius: 0.25rem;
-    background-color: var(--palette-raised);
+    /* Inherits the card's surface so the certificate's transparent rounded
+       corners vanish into the card instead of showing a seam. */
+    background-color: inherit;
 }
 
 .cert-image {
@@ -507,12 +509,32 @@
 .cert-meta {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    padding-bottom: 0.25rem;
+    gap: 0.3125rem;
+    padding: 0.875rem 1rem 1rem;
 }
 
 .cert-title {
     text-wrap: pretty;
+}
+
+.cert-issuer {
+    display: flex;
+    align-items: center;
+    gap: 0.4375rem;
+}
+
+/* The issuer's mark. Grey at rest like every other brand mark on the page,
+   brand colour on hover, so it never fights the certificate for attention. */
+.cert-issuer-mark {
+    width: 0.9375rem;
+    height: 0.9375rem;
+    flex-shrink: 0;
+    color: var(--palette-text-2);
+    transition: color var(--duration-ui) var(--ease-out-apple);
+}
+
+.cert-card:hover .cert-issuer-mark {
+    color: var(--brand);
 }
 
 /* ---------------------------------------------------------------------------

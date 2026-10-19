@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { CSSProperties } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 
@@ -29,6 +30,8 @@ export interface CertificateItem {
 	issued?: number;
 	summary?: string;
 	image: OptimizedImage;
+	/** The issuer's brand mark, resolved in src/data/certificates.ts. */
+	issuerMark?: { path: string; hex: string };
 	/** Shared UI copy, passed in so it still lives in src/data. */
 	labels: {
 		verifyAction: string;
@@ -111,6 +114,19 @@ export default function CertificateCards({ items }: { items: CertificateItem[] }
 								    WCAG 2.5.3, Label in Name. */}
 								{" "}
 								<span className="cert-issuer text-label uppercase tracking-label text-ink-2">
+									{item.issuerMark && (
+										<svg
+											viewBox="0 0 24 24"
+											fill="currentColor"
+											aria-hidden="true"
+											className="cert-issuer-mark"
+											style={
+												{ "--brand": `#${item.issuerMark.hex}` } as CSSProperties
+											}
+										>
+											<path d={item.issuerMark.path} />
+										</svg>
+									)}
 									{item.issuer}
 									{item.issued ? ` · ${item.issued}` : ""}
 								</span>
