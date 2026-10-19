@@ -30,7 +30,11 @@ CAS look, Apple behaviour: physical and calm, never bouncy.
   (`--ease-out-apple`, `--duration-ui`, `--duration-reveal`).
 - **Transform and opacity only.** No animated layout, and no animated
   filter/blur radius. Blur is used statically for glass, never tweened.
-- Heading reveal is a line-by-line mask-up; scroll reveals are a short rise.
+- Heading reveal is a mask-up over the whole heading block (the wrapper clips,
+  the inner block rises with the soft spring), so a heading that wraps onto
+  two lines still animates as one piece. Headings are single strings that
+  wrap naturally; `text-wrap: balance` keeps wrapped lines even. Scroll
+  reveals are a short rise.
 - Honour `prefers-reduced-motion`: transforms are dropped, scroll-linked
   effects are neutralised, and content renders at full opacity.
 - Never animate the background blur radius; only the blobs' `transform`.

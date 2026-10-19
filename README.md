@@ -75,8 +75,10 @@ All copy lives in `src/data/*.ts`. Strings marked `TODO(content)` are
 placeholder text waiting to be replaced. `profile.email` is empty on purpose:
 while it is, the Contact email button is hidden and the build prints a warning.
 
-Section headings are arrays, one entry per rendered line, so the mask-up can
-animate them line by line.
+Section headings are strings that wrap naturally. The mask-up reveals the
+whole heading as one block, so a heading that wraps onto two lines on a
+narrow screen still animates cleanly. `text-wrap: balance` keeps wrapped
+lines even.
 
 The About copy is capped at 60 words per paragraph for the word-brightening
 reveal; the build warns if you go over.

@@ -26,11 +26,11 @@ export const copy = {
 	},
 	about: {
 		label: "About",
-		lines: ["A little", "about me."],
+		lines: ["A little about me."],
 	},
 	skills: {
 		label: "Skills",
-		lines: ["Tools I", "keep close."],
+		lines: ["Tools I keep close."],
 	},
 	credentials: {
 		label: "Credentials",
@@ -39,11 +39,11 @@ export const copy = {
 	},
 	projects: {
 		label: "Projects",
-		lines: ["Still", "in progress."],
+		lines: ["Still in progress."],
 	},
 	contact: {
 		label: "Contact",
-		lines: ["Don't be", "a stranger."],
+		lines: ["Don't be a stranger."],
 		body: "Tell me what's on your mind: a project, a question, or just hello. I usually reply within a day.",
 		channels: {
 			whatsapp: "WhatsApp",

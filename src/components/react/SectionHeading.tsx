@@ -6,7 +6,9 @@ import { MotionRoot } from "./MotionRoot";
 
 interface SectionHeadingProps {
 	label: string;
-	/** One entry per rendered line - the mask-up reveals them in sequence. */
+	/** The heading text. A single string that wraps naturally; the mask-up
+	 *  reveals the whole block as one piece. Do not split by words or
+	 *  characters. */
 	lines: readonly string[];
 	/** 3 when nested under another heading, e.g. Credentials inside Skills. */
 	level?: 2 | 3;
@@ -29,9 +31,10 @@ const fadeUp: Variants = {
 };
 
 /**
- * Mask-up: each line starts translated fully below its own mask and slides
- * into place. The negative margin gives descenders room so the mask does not
- * clip them.
+ * Mask-up: the whole heading block starts translated fully below its own mask
+ * and slides into place. `text-wrap: balance` on the `.display` utility keeps
+ * wrapped lines even, so a heading that wraps onto two lines on a narrow
+ * screen still animates cleanly as one piece.
  */
 const maskUp: Variants = {
 	hidden: { opacity: 0, y: "108%" },
@@ -69,23 +72,11 @@ export default function SectionHeading({
 				</motion.p>
 
 				<Heading id={headingId} className="display mt-5 scroll-mt-24">
-					{lines.map((line, index) => (
-						<span
-							key={`${line}-${index}`}
-							className="block overflow-hidden pb-[0.14em] -mb-[0.14em]"
-						>
-							<motion.span className="rv block" variants={maskUp}>
-								{line}
-								{/*
-								 * Trailing space on every line but the last. The span is
-								 * `block`, so it collapses visually, but without it the
-								 * accessible name concatenates the lines into
-								 * "A short versionof this page."
-								 */}
-								{index < lines.length - 1 ? " " : null}
-							</motion.span>
-						</span>
-					))}
+					<span className="block overflow-hidden pb-[0.14em] -mb-[0.14em]">
+						<motion.span className="rv block" variants={maskUp}>
+							{lines.join(" ")}
+						</motion.span>
+					</span>
 				</Heading>
 
 				{children}
