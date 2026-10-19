@@ -211,19 +211,25 @@ issuer is one entry in a lookup table.
 
 ## Contact
 
-Three compact cards in a row, one per channel. No toggle, no panel: the
-channels are visible directly, which is what a contact section is for. Each
-card is a single button: one click opens the channel - WhatsApp chat, email
-compose, GitHub profile - directly. The address is still selectable text, but
-the primary action is to message, not to copy.
+Two large action links, EMAIL and WHATSAPP, side by side from the sm
+breakpoint, stacked on mobile. Together they are the single main action.
+Each has a min height of 88px (104px on desktop), a raised surface, a 1px
+low-opacity border, the same small radius as the rest of the site, a lucide
+icon (MessageCircle / Mail, strokeWidth 1.25) plus a tiny tracked uppercase
+label, the value (email address / WhatsApp display number) in the display
+serif at clamp(1.25rem, 3.5vw, 1.75rem) in ink, and an ArrowUpRight
+top-right that nudges on hover.
 
-- The cards are a grid, so they fill the row horizontally before another
-  row appears: three per row at 1152px, so the section grows by one row per
-  three channels rather than one row per channel.
-- Each card carries a small arrow in the corner that moves on hover, so the
-  action reads as "opens something" rather than "runs something".
-- The section is quiet: compact cards, muted text, small. It is the last
-  section on the page and does not dominate.
-- Without JS the island never hydrates and the buttons are inert, so
-  Contact.astro ships a `<noscript>` that prints the three channels as plain
-  links. The island server-renders the cards, so they still appear.
+- Real links: mailto: for email; the https://wa.me link for WhatsApp with
+  target="_blank" rel="noopener noreferrer". Visible text matches the
+  accessible name - no aria-label overriding it. Visible focus ring. Targets
+  are >= 44px.
+- Interaction is CSS only: hover lives inside @media (hover: hover) and
+  (pointer: fine) - border brightens, surface lifts one token step, arrow
+  shifts, using --ease-out-apple. Press is CSS :active scale(0.98) with the
+  quick duration. No glass. No new island. The channels are server-rendered
+  <a> links - no island, no JS dependency.
+- GitHub is a small tracked text link under the pair, text-2 colour, not a
+  card. A quiet horizontal rule separates the pair from it.
+- The section is quiet: small, at the bottom. It is the last section on the
+  page and does not dominate.

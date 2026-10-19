@@ -23,11 +23,14 @@ export interface Project {
  */
 export const projects: Project[] = [
 	{
-		slug: "project-one",
-		title: "Project One",
+		slug: "golearn",
+		title: "golearn",
 		status: "in-progress",
-		summary: "Coming soon.",
-		tech: [],
+		summary: "Runnable Go examples, one concept at a time, all built around a small lending library.",
+		tech: ["Go"],
+		links: {
+			repo: "https://github.com/NamX1/golearn",
+		},
 	},
 	{
 		slug: "project-two",

@@ -18,6 +18,10 @@ export interface ProjectCardData {
 	statusLabel: string;
 	summary?: string;
 	tech: string[];
+	links?: {
+		repo?: string;
+		live?: string;
+	};
 }
 
 /**
@@ -72,6 +76,17 @@ export default function ProjectGrid({ items }: { items: ProjectCardData[] }) {
 										))}
 									</ul>
 								)}
+
+							{project.links?.repo && (
+								<a
+									href={project.links.repo}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="text-label uppercase tracking-label text-ink-2 transition-colors duration-[var(--duration-ui)] ease-[var(--ease-out-apple)] hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-2"
+								>
+									Repository
+								</a>
+							)}
 							</CardContent>
 						</Card>
 					</motion.li>
