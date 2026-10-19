@@ -538,6 +538,77 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * Contact cards.
+ *
+ * Quiet, small, at the bottom. Three compact cards in a row, each one a link
+ * to its channel with a small copy control in the corner. No toggle, no
+ * panel, no glass - the channels are visible directly, which is what a
+ * contact section is for.
+ *
+ * The cards are a grid, so they fill the row horizontally before another
+ * row appears: three per row at 1152px, so the section grows by one row per
+ * three channels rather than one row per channel.
+ * ------------------------------------------------------------------------ */
+
+.contact-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 1rem;
+    margin-top: 2.5rem;
+}
+
+.contact-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: var(--palette-surface);
+    border: 1px solid rgb(255 255 255 / 0.07);
+    transition:
+        border-color var(--duration-ui) var(--ease-out-apple),
+        background-color var(--duration-ui) var(--ease-out-apple);
+}
+
+.contact-card:hover {
+    border-color: rgb(255 255 255 / 0.16);
+    background-color: var(--palette-raised);
+}
+
+.contact-card-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 0;
+    color: inherit;
+    text-decoration: none;
+}
+
+.contact-card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.contact-card-value {
+    word-break: break-word;
+}
+
+.contact-card-copy {
+    position: absolute;
+    top: 0.625rem;
+    right: 0.625rem;
+    color: var(--palette-text-2);
+    transition: color var(--duration-ui) var(--ease-out-apple);
+}
+
+.contact-card-copy:hover,
+.contact-card-copy:focus-visible {
+    color: var(--palette-text);
+}
+
+/* ---------------------------------------------------------------------------
  * Background: drifting blobs + cursor spotlight.
  * Blur radius is static; only transform is ever animated.
  * ------------------------------------------------------------------------ */

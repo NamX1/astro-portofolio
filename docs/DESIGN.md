@@ -46,10 +46,7 @@ CAS look, Apple behaviour: physical and calm, never bouncy.
 
 ## Frosted glass
 
-Deliberately limited to four surfaces: the **sticky nav**, the **certificate
-hover overlay**, **dialogs**, and the **contact channel panel**. Never more than
-one on screen at a time besides the nav — which the contact panel satisfies, as
-it sits at the bottom of the page where the nav is the only other glass.
+Deliberately limited to three surfaces: the **sticky nav**, the **certificate\nhover overlay**, and **dialogs**. Never more than one on screen at a time besides\nthe nav.
 
 Recipe: `rgb(28 28 30 / 0.6)` tint, `blur(20px) saturate(1.4)`, a 1px border at
 8% white, and a faint inset top highlight. Falls back to a solid token where
@@ -214,17 +211,21 @@ issuer is one entry in a lookup table.
 
 ## Contact
 
-One toggle, one panel, three channels (WhatsApp, Email, GitHub). A disclosure,
-not a modal: focus stays on the toggle, nothing is trapped, and the panel
-unmounts when closed so its links leave the tab order.
+Three compact cards in a row, one per channel. No toggle, no panel: the
+channels are visible directly, which is what a contact section is for. Each
+card is a link to its channel, with a small copy control in the corner.
 
-- Each row is `[icon] [label + address] [copy]` as **siblings**. A copy control
-  nested inside the link would be a keyboard trap and a broken tap target.
-- `value` is what a human reads, `copyValue` is what lands on the clipboard —
+- The cards are a grid, so they fill the row horizontally before another
+  row appears: three per row at 1152px, so the section grows by one row per
+  three channels rather than one row per channel.
+- The link and the copy control are **siblings**, not nested. An interactive
+  element inside a link is a keyboard trap and a broken tap target.
+- `value` is what a human reads, `copyValue` is what lands on the clipboard -
   they differ for GitHub, where nobody types `https://` into a message.
-- Confirmation is an inline icon swap **plus** an `aria-live` region; the swap
+- Confirmation is an inline icon swap plus an `aria-live` region; the swap
   alone is invisible to a screen reader.
-- Without JS the island never renders, so Contact.astro ships a `<noscript>`
-  that hides the toggle and prints the three links expanded.
-- Entrance is transform + opacity only, matching `.cert-panel`. Height is never
-  animated.
+- Without JS the island never hydrates and the copy buttons are inert, so
+  Contact.astro ships a `<noscript>` that prints the three channels as plain
+  links. The island server-renders the cards, so they still appear.
+- The section is quiet: compact cards, muted text, small. It is the last
+  section on the page and does not dominate.

@@ -1,7 +1,7 @@
 ---
 import SectionHeading from "../react/SectionHeading";
 import Reveal from "../react/Reveal";
-import ContactPanel from "../react/ContactPanel";
+import ContactCards from "../react/ContactCards";
 import { copy } from "../../data/content";
 import { hasEmail, hasWhatsApp } from "../../data/profile";
 import { contactChannels } from "../../data/contact";
@@ -20,7 +20,6 @@ if (!hasWhatsApp) {
 }
 
 const labels = {
-	toggleLabel: copy.contact.toggleLabel,
 	copyAction: copy.contact.copyAction,
 	copiedLabel: copy.contact.copiedLabel,
 };
@@ -40,43 +39,38 @@ const labels = {
 				</p>
 			</Reveal>
 
-			<ContactPanel client:load channels={contactChannels} labels={labels} />
+			{/* The channels are visible directly, no toggle. The island
+			    server-renders the cards, so they appear even without JS;
+			    only the copy button needs hydration. */}
+			<ContactCards client:visible channels={contactChannels} labels={labels} />
 		</SectionHeading>
-
-		{/*
-			The panel only exists once the island hydrates, so without JS the
-			section would show a button that does nothing and no way to reach
-			anyone. This hides the toggle and renders the channels themselves,
-			expanded, inside the section so they stay in the landmark.
-
-			`data-contact-toggle` is set by ContactPanel.tsx and must stay in
-			sync with the selector below.
-		*/}
-		<noscript>
-			<style>
-				[data-contact-toggle] {
-					display: none !important;
-				}
-			</style>
-			<ul class="mt-10">
-				{
-					contactChannels.map((channel) => (
-						<li class="border-t border-border/40 py-4 last:border-b">
-							<a
-								href={channel.href}
-								target={channel.external ? "_blank" : undefined}
-								rel={channel.external ? "noopener noreferrer" : undefined}
-								class="block rounded-sm text-body text-ink underline-offset-4 hover:underline"
-							>
-								<span class="block text-label uppercase tracking-label text-ink-2">
-									{channel.label}
-								</span>
-								<span class="mt-1 block tracking-tight">{channel.value}</span>
-							</a>
-						</li>
-					))
-				}
-			</ul>
-		</noscript>
 	</div>
 </section>
+
+{/*
+	Without JS the island never hydrates and the copy buttons are inert, so
+	the plain links below are the reachable fallback.
+*/}
+<noscript>
+	<ul class="shell mt-10 grid grid-cols-1 gap-3 sm:grid-cols-3">
+		{
+			contactChannels.map((channel) => (
+				<li class="border border-border/40 bg-surface p-4">
+					<a
+						href={channel.href}
+						target={channel.external ? "_blank" : undefined}
+						rel={channel.external ? "noopener noreferrer" : undefined}
+						class="block"
+					>
+						<span class="block text-label uppercase tracking-label text-ink-2">
+							{channel.label}
+						</span>
+						<span class="mt-2 block text-body text-ink tracking-tight">
+							{channel.value}
+						</span>
+					</a>
+				</li>
+			))
+		}
+	</ul>
+</noscript>
