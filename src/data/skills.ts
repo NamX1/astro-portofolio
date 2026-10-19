@@ -29,6 +29,8 @@ export type SkillIcon =
 export interface Skill {
 	label: string;
 	icon: SkillIcon;
+	/** A short qualifier, shown next to the label. Facts only. */
+	note?: string;
 }
 
 export interface SkillGroup {
@@ -74,9 +76,9 @@ export const skillGroups: SkillGroup[] = [
 	{
 		label: "Workflow",
 		skills: [
-			{ label: "Git", icon: brand(siGit) },
+			{ label: "Git", icon: brand(siGit), note: "basics" },
 			{ label: "GitHub", icon: brand(siGithub) },
-			{ label: "Linux", icon: brand(siLinux) },
+			{ label: "Linux", icon: brand(siLinux), note: "basic commands & server operation" },
 		],
 	},
 ];
