@@ -6,11 +6,11 @@
  * each entry is one line. Section bodies live with their data.
  */
 export const seo = {
-	title: "Kevin Charlie — Web Developer",
+	title: "Kevin Charlie — Portfolio",
 	/** TODO(content): 150-160 characters, written for a human not a crawler. */
 	description:
-		"Kevin Charlie builds fast, quiet websites for people who'd rather be doing something else. Python, TypeScript, Astro, Tailwind. You talk to me directly, and the invoice has one number on it.",
-	ogAlt: "Kevin Charlie — web developer",
+		"Portfolio of Kevin Charlie: projects, skills, and certificates. Mostly Python and Go, plus a growing habit of building things for the web. Say hello.",
+	ogAlt: "Kevin Charlie — portfolio",
 } as const;
 
 export const nav = {
@@ -21,43 +21,38 @@ export const nav = {
 
 export const copy = {
 	hero: {
-		contactLabel: "Get in touch",
-		projectsLabel: "See the work",
+		contactLabel: "Say hello",
+		projectsLabel: "Projects",
 	},
 	about: {
 		label: "About",
-		lines: ["A short version", "of this page."],
+		lines: ["A little", "about me."],
 	},
 	skills: {
 		label: "Skills",
-		lines: ["What I reach", "for."],
+		lines: ["Tools I", "keep close."],
 	},
 	credentials: {
 		label: "Credentials",
-		/** TODO(content): wording for the in-card overlay and the dialog. */
+		/** TODO(content): wording for the lightbox. */
 		verifyAction: "Verify credential",
 	},
 	projects: {
 		label: "Projects",
-		lines: ["Things I'm", "building."],
+		lines: ["Still", "in progress."],
 	},
 	contact: {
 		label: "Contact",
-		lines: ["Say", "hello."],
-		body: "Tell me what you're after and roughly when. If I'm not the right fit I'll say so, and that costs neither of us anything.",
-		/** TODO(content): the single control that opens the channel panel. */
-		toggleLabel: "Get in touch",
+		lines: ["Don't be", "a stranger."],
+		body: "Tell me what's on your mind: a project, a question, or just hello. I usually reply within a day.",
 		channels: {
 			whatsapp: "WhatsApp",
 			email: "Email",
 			github: "GitHub",
 		},
-		/** Screen-reader names for the per-channel copy control. */
-		copyAction: "Copy",
-		copiedLabel: "Copied",
 	},
 	footer: {
 		/** TODO(content): one quiet line. */
-		line: "Made slowly, in the dark.",
+		line: "Built slowly, on purpose.",
 	},
 } as const;

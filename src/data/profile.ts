@@ -12,7 +12,7 @@ export const profile = {
 	 * TODO(content): one line, under about ten words. This is the promise the
 	 * rest of the page has to keep.
 	 */
-	tagline: "The right person for the job, without the agency detour.",
+	tagline: "Python, Go, and the quiet parts of the web.",
 
 	/** TODO(content): swap in the address you actually want on the page. */
 	email: "hello@kevincharlie.dev",
@@ -27,11 +27,9 @@ export const profile = {
 		number: "6281510767097",
 		display: "+62 815-1076-7097",
 		/**
-		 * TODO(content): set this to open WhatsApp with a message already
-		 * typed, e.g. `text: "Hi Kevin - found you via your site."`. Left off
-		 * so the link opens a blank chat rather than assuming what you say.
+		 * TODO(content): confirm wording.
 		 */
-		message: undefined as string | undefined,
+		message: "Hi Kevin, I found your portfolio and wanted to say hello.",
 	},
 
 	/**
@@ -52,8 +50,7 @@ export const profile = {
 	 * reveal caps each paragraph at 60 words, so keep them under that.
 	 */
 	about: [
-		"I build websites that load fast and then get out of the way. You tell me what you need, I build it, and you get the only thing that really matters here: a site that just works.",
-		"No account managers, no discovery-call invoice, no “let's circle back”. Just me, the work, and one number on the quote.",
+		"I'm Kevin Charlie. I write Python and Go, and this site is where I keep what I make.",
 	],
 } as const;
 

@@ -74,6 +74,7 @@ const input: CertificateInput[] = [
 		verifyUrl: "https://www.hackerrank.com/certificates/d5f710b194af",
 		image: "hackerrank-python-basic",
 		alt: "HackerRank Certificate of Accomplishment for Python (Basic), issued to Kevin Charlie on 15 July 2024.",
+		summary: "Python fundamentals, verified through HackerRank's skills test.",
 	},
 ];
 
