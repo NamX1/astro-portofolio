@@ -386,6 +386,118 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * Skill band.
+ *
+ * The grouped block under the marquee. A ruled band that spans the full
+ * column: the group label anchored left, the items spread across the rest.
+ *
+ * Lives here rather than in Skills.astro for the same reason `.skill` does -
+ * the reveal trigger is set by BandReveal.tsx, an island, so the rule that
+ * reads it crosses a component boundary. Astro scopes a component's <style> to
+ * that component's own scope id, so a scoped ancestor selector would never
+ * match the island's wrapper.
+ *
+ * The entrance is the still counterpart to the marquee above it: the top rule
+ * draws in from the left, the items rise in sequence, the bottom rule closes
+ * from the right.
+ * ------------------------------------------------------------------------ */
+
+.band {
+    display: flex;
+    flex-direction: column;
+}
+
+.band-rule {
+    display: block;
+    height: 1px;
+    background-color: rgb(255 255 255 / 0.14);
+    transform: scaleX(0);
+    transition: transform 0.9s var(--ease-out-apple);
+}
+
+/* The top rule opens from the left, the bottom rule closes from the right. */
+.band-rule-top {
+    transform-origin: left;
+}
+
+.band-rule-bottom {
+    transform-origin: right;
+    transition-delay: 0.45s;
+}
+
+.band-row {
+    display: grid;
+    gap: 1rem;
+    padding-block: 1.5rem;
+}
+
+@media (min-width: 40rem) {
+    .band-row {
+        grid-template-columns: 9rem 1fr;
+        align-items: center;
+        gap: 2.5rem;
+        padding-block: 1.75rem;
+    }
+}
+
+.band-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+}
+
+@media (min-width: 40rem) {
+    .band-items {
+        justify-content: space-between;
+    }
+}
+
+.band-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+        opacity 0.6s var(--ease-out-apple),
+        transform 0.6s var(--ease-out-apple);
+}
+
+/* Stagger, so the items arrive in sequence rather than all at once. */
+.band-item:nth-child(1) {
+    transition-delay: 0.18s;
+}
+
+.band-item:nth-child(2) {
+    transition-delay: 0.24s;
+}
+
+.band-item:nth-child(3) {
+    transition-delay: 0.3s;
+}
+
+.band-item:nth-child(4) {
+    transition-delay: 0.36s;
+}
+
+.band-item:nth-child(5) {
+    transition-delay: 0.42s;
+}
+
+.band-item:nth-child(6) {
+    transition-delay: 0.48s;
+}
+
+[data-band="in"] .band-rule {
+    transform: scaleX(1);
+}
+
+[data-band="in"] .band-item {
+    opacity: 1;
+    transform: none;
+}
+
+/* ---------------------------------------------------------------------------
  * Background: drifting blobs + cursor spotlight.
  * Blur radius is static; only transform is ever animated.
  * ------------------------------------------------------------------------ */
@@ -578,6 +690,17 @@
     .skill:hover svg,
     .skill:active svg {
         transform: none;
+    }
+
+    /* The band opens and closes with rules that draw in. Under reduced
+       motion they are simply there. */
+    .band-rule {
+        transform: scaleX(1) !important;
+    }
+
+    .band-item {
+        opacity: 1 !important;
+        transform: none !important;
     }
 
     *,

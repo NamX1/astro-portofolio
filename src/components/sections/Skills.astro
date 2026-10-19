@@ -4,6 +4,7 @@ import { getImage } from "astro:assets";
 import SkillMark from "../ui/SkillMark.astro";
 import SectionHeading from "../react/SectionHeading";
 import Reveal from "../react/Reveal";
+import BandReveal from "../react/BandReveal";
 import CertificateGrid from "../react/CertificateGrid";
 import { copy } from "../../data/content";
 import { marqueeSkills, skillGroups } from "../../data/skills";
@@ -127,23 +128,31 @@ const marqueeRepeats = 3;
 		{
 			skillGroups.length > 0 && (
 				<div class="mt-16 sm:mt-20">
-					{skillGroups.map((group) => (
-						<div class="skill-group">
-							<h3 class="text-label uppercase tracking-label text-ink-2">
-								{group.label}
-							</h3>
-							<ul class="mt-5 flex flex-wrap gap-x-8 gap-y-4 sm:gap-x-10">
-								{group.skills.map((skill) => (
-									<li class="skill flex items-center gap-2.5">
-										<SkillMark skill={skill} class="size-5" />
-										<span class="text-body text-ink-2" translate="no">
-											{skill.label}
-										</span>
-									</li>
-								))}
-							</ul>
-						</div>
-					))}
+					<BandReveal client:visible>
+						{skillGroups.map((group) => (
+							<div class="band">
+								<span class="band-rule band-rule-top" aria-hidden="true" />
+
+								<div class="band-row">
+									<h3 class="band-label text-label uppercase tracking-label text-ink-2">
+										{group.label}
+									</h3>
+									<ul class="band-items">
+										{group.skills.map((skill) => (
+											<li class="band-item skill">
+												<SkillMark skill={skill} class="size-5" />
+												<span class="text-body text-ink-2" translate="no">
+													{skill.label}
+												</span>
+											</li>
+										))}
+									</ul>
+								</div>
+
+								<span class="band-rule band-rule-bottom" aria-hidden="true" />
+							</div>
+						))}
+					</BandReveal>
 				</div>
 			)
 		}
@@ -215,10 +224,6 @@ const marqueeRepeats = 3;
 		to {
 			transform: translateX(-33.3333%);
 		}
-	}
-
-	.skill-group + .skill-group {
-		margin-top: 2.5rem;
 	}
 
 	@media (prefers-reduced-motion: reduce) {

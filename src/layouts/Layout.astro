@@ -74,6 +74,17 @@ const ogImage = "/og.png";
 				.blob {
 					animation: none !important;
 				}
+				/* The skill band opens with rules that draw in and items that
+				   rise. BandReveal.tsx sets data-band="out" on the server, so
+				   without scripting it would never open. Keep this list in step
+				   with the reduced-motion block at the bottom of global.css. */
+				.band-rule {
+					transform: scaleX(1) !important;
+				}
+				.band-item {
+					opacity: 1 !important;
+					transform: none !important;
+				}
 			</style>
 		</noscript>
 	</head>

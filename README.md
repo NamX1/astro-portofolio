@@ -45,6 +45,7 @@ transitions use `--ease-out-apple`.
 | `SectionHeading` | `client:visible` | Line-by-line mask-up heading. Also carries each section's content as children, so it is usually the only island a section needs. |
 | `WordReveal` | `client:visible` | About copy brightens word by word against scroll position. |
 | `Reveal` | `client:visible` | Shared short rise + fade for content blocks. |
+| `BandReveal` | `client:visible` | Sets `data-band` on the skill band so the stylesheet can draw its rules in. Not Motion - Motion cannot flip a descendant's transition. |
 | `ProjectGrid` | `client:visible` | Press feedback and hover lift on the cards. One island for all three. |
 | `CertificateGrid` | `client:visible` | Card press feedback plus the detail dialog. Hover/focus styling is pure CSS. |
 | `ContactPanel` | `client:visible` | The contact disclosure: one toggle, three channels, copy-to-clipboard. Falls back to plain links in Contact.astro's `<noscript>`. |

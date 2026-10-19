@@ -109,6 +109,31 @@ hover, and WCAG 2.2.2 asks for a way to stop auto-moving content. Under
 `prefers-reduced-motion` the scroll stops and the list wraps once, so all
 seven stay readable.
 
+### The band
+
+The grouped block is a **ruled band**, not a list: a hairline above, a
+hairline below, the group label anchored left, the items spread across the
+rest of the width. It is the still counterpart to the marquee directly above
+it — a title plate under a title sequence, which is the end-credit language
+this page borrows from.
+
+The earlier version was a label plus three icon-and-word pairs clustered in
+the left third of the column. Under a full-bleed marquee that read as a stray
+list, and a list of tools is the generic way to show tools. The band fixes
+the composition — the block now spans the full column — and gives the tools a
+reason to be structured.
+
+Its entrance is the same shutter gesture: the top rule draws in from the left,
+the items rise in sequence, the bottom rule closes from the right. One
+authored moment, horizontal, slower than the marquee.
+
+`BandReveal.tsx` sets `data-band` and the stylesheet does the rest. It is
+deliberately not Motion — Motion animates inline styles on the element it is
+given and cannot flip a descendant's transition, and the band needs to drive
+rules and items it does not own. The band rules live in `global.css` for the
+same reason `.skill` and `.cert-*` do: the trigger is set across an island
+boundary, and Astro scopes a component's `<style>` to its own scope id.
+
 ## Contact
 
 One toggle, one panel, three channels (WhatsApp, Email, GitHub). A disclosure,
